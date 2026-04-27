@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>EroShop</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d0f14;--sur:#161920;--sur2:#1e2330;--bdr:#2a2f3d;
+  --acc:#f5a623;--red:#ef4444;--grn:#22c55e;--yel:#facc15;--blu:#63b3ed;--pur:#a78bfa;
+  --txt:#e8ecf4;--mut:#6b7280;
+  --fd:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;
+  --nh:56px;--sb:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);display:flex;flex-direction:column;}
+
+/* ── TOP BAR ── */
+.top{background:var(--sur);border-bottom:1px solid var(--bdr);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px;}
+.shop-brand{display:flex;flex-direction:column;line-height:1;}
+.sname{font-family:var(--fd);font-size:24px;color:var(--acc);letter-spacing:3px;line-height:1;}
+.ssub{font-size:8px;color:var(--mut);letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+.top-center{flex:1;display:flex;justify-content:center;}
+.date-chip{background:var(--sur2);border:1px solid var(--bdr);border-radius:20px;padding:5px 11px;font-size:10px;color:var(--mut);white-space:nowrap;}
+.add-btn{width:36px;height:36px;background:var(--acc);border-radius:10px;border:none;color:#000;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;}
+.add-btn:active{transform:scale(.92);}
+.add-btn.hidden{visibility:hidden;pointer-events:none;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nh)+var(--sb)+4px);}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--sur);border-top:1px solid var(--bdr);display:flex;z-index:100;height:var(--nh);padding-bottom:var(--sb);}
+.ntab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--mut);font-size:7px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;border:none;background:none;padding:3px 1px;}
+.ntab svg{width:17px;height:17px;}
+.ntab.active{color:var(--acc);}
+
+/* ── PAGES ── */
+.page{display:none;padding:11px 11px 0;}
+.page.active{display:block;}
+.ptitle{font-family:var(--fd);font-size:22px;letter-spacing:2px;margin-bottom:11px;padding-top:6px;}
+.ptitle span{color:var(--acc);}
+
+/* ── STATS ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px;}
+.sc{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:11px 10px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc.o::before{background:var(--acc);}
+.sc.r::before{background:var(--red);}
+.sc.g::before{background:var(--grn);}
+.sc.y::before{background:var(--yel);}
+.sc.b::before{background:var(--blu);}
+.sc.p::before{background:var(--pur);}
+.slbl{font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+.sval{font-family:var(--fd);font-size:22px;letter-spacing:1px;line-height:1;}
+.sval.o{color:var(--acc);}
+.sval.r{color:var(--red);}
+.sval.g{color:var(--grn);}
+.sval.y{color:var(--yel);}
+.sval.b{color:var(--blu);}
+.sval.p{color:var(--pur);}
+.ssub2{font-size:9px;color:var(--mut);margin-top:3px;}
+
+/* ── ALERT ── */
+.alert{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:9px;padding:8px 10px;margin-bottom:9px;display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--red);}
+
+/* ── SEARCH ── */
+.srch{width:100%;background:var(--sur);border:1px solid var(--bdr);border-radius:9px;padding:9px 12px;color:var(--txt);font-family:var(--fb);font-size:13px;outline:none;margin-bottom:9px;-webkit-appearance:none;}
+.srch:focus{border-color:var(--acc);}
+.srch::placeholder{color:var(--mut);}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:3px;background:var(--sur2);border-radius:9px;padding:3px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:5px 11px;border-radius:7px;cursor:pointer;font-size:10px;font-weight:700;color:var(--mut);white-space:nowrap;flex-shrink:0;border:none;background:none;}
+.tab.active{background:var(--sur);color:var(--txt);}
+
+/* ── CARDS ── */
+.cl{display:flex;flex-direction:column;gap:8px;}
+.ic{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:11px;}
+.ich{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.iname{font-size:13px;font-weight:700;line-height:1.3;}
+.imeta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;}
+.iact{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);}
+
+/* ── BADGES ── */
+.b{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;font-family:var(--fm);}
+.bg{background:rgba(34,197,94,.12);color:var(--grn);}
+.br{background:rgba(239,68,68,.12);color:var(--red);}
+.by{background:rgba(250,204,21,.12);color:var(--yel);}
+.bo{background:rgba(245,166,35,.12);color:var(--acc);}
+.bb{background:rgba(99,179,237,.12);color:var(--blu);}
+.bp{background:rgba(167,139,250,.12);color:var(--pur);}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 14px;border-radius:9px;font-family:var(--fb);font-size:12px;font-weight:700;cursor:pointer;border:none;touch-action:manipulation;}
+.btp{background:var(--acc);color:#000;}
+.btp:active{transform:scale(.97);}
+.btg{background:transparent;color:var(--mut);border:1px solid var(--bdr);}
+.btic{background:var(--sur2);border:1px solid var(--bdr);border-radius:7px;color:var(--mut);padding:6px 9px;font-size:11px;cursor:pointer;font-family:var(--fb);flex:1;touch-action:manipulation;}
+.btic:active{color:var(--acc);border-color:var(--acc);}
+.btic.dl:active{color:var(--red);border-color:var(--red);}
+.btic.prnt{background:rgba(245,166,35,.1);color:var(--acc);border-color:rgba(245,166,35,.4);}
+.btic.grn{background:rgba(34,197,94,.1);color:var(--grn);border-color:rgba(34,197,94,.4);}
+
+/* ── MODAL ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:flex-end;justify-content:center;}
+.mbg.open{display:flex;}
+.modal{background:var(--sur);border:1px solid var(--bdr);border-radius:18px 18px 0 0;padding:15px 13px calc(15px + var(--sb));width:100%;max-height:94vh;overflow-y:auto;animation:sup .22s ease;}
+@keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhdl{width:30px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 12px;}
+.mtitle{font-family:var(--fd);font-size:19px;letter-spacing:1.5px;margin-bottom:12px;color:var(--acc);}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:9px;}
+label{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+input,select,textarea{background:var(--sur2);border:1px solid var(--bdr);border-radius:9px;padding:9px 11px;color:var(--txt);font-family:var(--fb);font-size:14px;outline:none;width:100%;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);}
+select option{background:var(--sur2);}
+textarea{resize:none;min-height:60px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mact{display:flex;gap:8px;margin-top:12px;}
+.mact .btn{flex:1;}
+
+/* ── CALCULATOR ── */
+.cbox{background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:11px;margin-bottom:9px;}
+.ctitle{font-size:9px;color:var(--acc);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:9px;}
+.csect{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin:9px 0 6px;}
+.calc-srch{width:100%;background:var(--sur);border:1px solid var(--bdr);border-radius:7px;padding:7px 10px;color:var(--txt);font-family:var(--fb);font-size:12px;outline:none;margin-bottom:7px;-webkit-appearance:none;}
+.calc-srch:focus{border-color:var(--acc);}
+.calc-srch::placeholder{color:var(--mut);}
+
+/* ── PART PICKER ── */
+.prow{display:flex;gap:5px;align-items:center;margin-bottom:6px;background:var(--sur);border:1px solid var(--bdr);border-radius:8px;padding:7px 8px;}
+.prow-info{flex:1;min-width:0;}
+.prow-name{font-size:12px;font-weight:600;}
+.prow-sub{font-size:9px;color:var(--mut);margin-top:1px;}
+.prow-right{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.qty-btn{width:24px;height:24px;background:var(--sur2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;touch-action:manipulation;}
+.qty-btn:active{background:var(--acc);color:#000;border-color:var(--acc);}
+.qty-num{font-family:var(--fm);font-size:13px;font-weight:700;min-width:16px;text-align:center;}
+.prow-price{font-family:var(--fm);font-size:11px;color:var(--acc);min-width:55px;text-align:right;}
+
+/* ── SERVICE PICKER ── */
+.srow{display:flex;align-items:center;gap:7px;margin-bottom:6px;background:var(--sur);border:1px solid var(--bdr);border-radius:8px;padding:7px 8px;cursor:pointer;}
+.srow.sel{border-color:var(--acc);background:rgba(245,166,35,.06);}
+.srow-info{flex:1;}
+.srow-name{font-size:12px;font-weight:600;}
+.srow-price{font-family:var(--fm);font-size:12px;color:var(--acc);}
+.srow-chk{width:17px;height:17px;border:2px solid var(--bdr);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.srow.sel .srow-chk{background:var(--acc);border-color:var(--acc);color:#000;}
+
+/* ── CALC SUMMARY ── */
+.csumm{border-top:1px solid var(--bdr);padding-top:8px;margin-top:3px;}
+.crow{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:12px;}
+.crow .lbl{color:var(--mut);}
+.crow .val{font-family:var(--fm);}
+.crow.tot .val{color:var(--acc);font-size:15px;font-weight:700;}
+
+/* ── REVENUE BAR ── */
+.rrow{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.rlbl{font-size:10px;color:var(--mut);width:60px;flex-shrink:0;}
+.rbbg{flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden;}
+.rb{height:100%;border-radius:4px;transition:width .5s ease;}
+.rval{font-family:var(--fm);font-size:10px;width:70px;text-align:right;flex-shrink:0;}
+
+/* ── MINI TABLE ── */
+.mtbl{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:3px;}
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-bottom:1px solid var(--bdr);gap:7px;}
+.mrow:last-child{border-bottom:none;}
+.mleft{flex:1;min-width:0;}
+.mn{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.md{font-size:10px;color:var(--mut);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.tag{font-size:9px;padding:2px 6px;background:var(--sur2);border-radius:4px;color:var(--mut);}
+.price{font-family:var(--fm);color:var(--acc);}
+.fbl{display:inline-flex;align-items:center;gap:4px;color:#60a5fa;font-size:11px;text-decoration:none;padding:2px 0;}
+.fbl svg{width:12px;height:12px;fill:#60a5fa;flex-shrink:0;}
+.empty{text-align:center;padding:30px;color:var(--mut);font-size:12px;}
+.sh{margin-bottom:7px;margin-top:12px;}
+.stitle{font-family:var(--fd);font-size:15px;letter-spacing:1.5px;}
+
+/* ── RECEIPT MODAL ── */
+#modal-receipt,#modal-inv-table{z-index:300;}
+.rec-wrap{display:flex;flex-direction:column;max-height:96vh;border-radius:18px 18px 0 0;overflow:hidden;}
+.rec-hdr{padding:12px 14px 9px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);background:var(--sur);flex-shrink:0;}
+/* receipt body uses iframe — no bg leak */
+.rec-body{flex:1;overflow:hidden;background:var(--sur2);}
+.rec-body iframe{width:100%;height:100%;border:none;background:#fff;}
+.rec-act{padding:10px 13px calc(10px + var(--sb));display:flex;gap:8px;border-top:1px solid var(--bdr);background:var(--sur);flex-shrink:0;}
+.rec-act .btn{flex:1;}
+
+/* ── INV TABLE MODAL ── */
+.inv-tbl-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.inv-tbl{border-collapse:collapse;font-size:11px;width:100%;min-width:520px;}
+.inv-tbl th{background:var(--sur2);padding:8px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);border-bottom:1px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;}
+.inv-tbl td{padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;vertical-align:middle;color:var(--txt);}
+.inv-tbl tr:last-child td{border-bottom:none;}
+.inv-tbl tr:hover td{background:rgba(255,255,255,.03);}
+.inv-tbl .ok{color:var(--grn);font-weight:700;}
+.inv-tbl .low{color:var(--yel);font-weight:700;}
+.inv-tbl .out{color:var(--red);font-weight:700;}
+/* filter tabs inside table modal */
+.tbl-filters{display:flex;gap:3px;padding:10px 12px 6px;background:var(--sur);border-bottom:1px solid var(--bdr);}
+.tbl-ft{padding:4px 11px;border-radius:6px;cursor:pointer;font-size:10px;font-weight:700;color:var(--mut);border:none;background:var(--sur2);}
+.tbl-ft.active{color:var(--txt);background:var(--bdr);}
+.tbl-ft.red.active{background:rgba(239,68,68,.2);color:var(--red);}
+.tbl-ft.yel.active{background:rgba(250,204,21,.2);color:var(--yel);}
+.tbl-ft.grn.active{background:rgba(34,197,94,.2);color:var(--grn);}
+
+/* ── PRINT via iframe ── */
+@media print{body *{visibility:hidden;}}
+
+/* ══════════════════════════════════════════
+   AUTH SYSTEM
+══════════════════════════════════════════ */
+#auth-screen{
+  position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;overflow-y:auto;
+}
+#auth-screen.hidden{display:none;}
+.auth-card{
+  background:var(--sur);border:1px solid var(--bdr);border-radius:20px;
+  padding:28px 22px;width:100%;max-width:380px;
+}
+.auth-logo{font-family:var(--fd);font-size:38px;color:var(--acc);letter-spacing:4px;text-align:center;line-height:1;}
+.auth-sub{font-size:9px;color:var(--mut);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-top:2px;margin-bottom:22px;}
+.auth-title{font-family:var(--fd);font-size:18px;letter-spacing:2px;color:var(--txt);margin-bottom:16px;}
+.auth-fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.auth-fg label{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+.auth-input{background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:11px 13px;color:var(--txt);font-family:var(--fb);font-size:15px;outline:none;width:100%;-webkit-appearance:none;transition:border .15s;}
+.auth-input:focus{border-color:var(--acc);}
+.auth-input::placeholder{color:var(--mut);}
+.auth-btn{width:100%;padding:13px;border-radius:11px;font-family:var(--fb);font-size:14px;font-weight:700;cursor:pointer;border:none;touch-action:manipulation;margin-top:4px;transition:all .15s;}
+.auth-btn.primary{background:var(--acc);color:#000;}
+.auth-btn.primary:active{transform:scale(.97);}
+.auth-btn.ghost{background:transparent;color:var(--mut);border:1px solid var(--bdr);margin-top:8px;}
+.auth-btn.ghost:active{color:var(--txt);}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
+.auth-divider span{height:1px;flex:1;background:var(--bdr);}
+.auth-divider p{font-size:10px;color:var(--mut);white-space:nowrap;}
+.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--red);margin-bottom:10px;display:none;}
+.auth-info{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--acc);margin-bottom:12px;display:none;line-height:1.5;}
+.auth-success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--grn);margin-bottom:10px;display:none;}
+.auth-link{font-size:12px;color:var(--acc);cursor:pointer;text-decoration:underline;}
+.auth-footer{text-align:center;margin-top:14px;font-size:11px;color:var(--mut);}
+/* Password strength */
+.pw-strength{height:3px;border-radius:2px;margin-top:5px;transition:all .3s;background:var(--bdr);}
+/* User badge in top bar */
+.user-badge{display:flex;align-items:center;gap:6px;background:var(--sur2);border:1px solid var(--bdr);border-radius:20px;padding:4px 10px;cursor:pointer;}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;flex-shrink:0;}
+.user-name{font-size:10px;color:var(--txt);font-weight:600;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Admin panel */
+.admin-panel{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9000;display:none;align-items:flex-end;justify-content:center;}
+.admin-panel.open{display:flex;}
+.admin-modal{background:var(--sur);border:1px solid var(--bdr);border-radius:18px 18px 0 0;padding:16px 14px calc(20px + var(--sb));width:100%;max-height:90vh;overflow-y:auto;animation:sup .22s ease;}
+.req-card{background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:11px;margin-bottom:9px;}
+.req-name{font-size:13px;font-weight:700;}
+.req-role{font-size:10px;color:var(--mut);margin-top:2px;}
+.req-actions{display:flex;gap:7px;margin-top:9px;}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px;}
+</style>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#f5a623"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="EroShop"/>
+<link rel="apple-touch-icon" href="icon-192.svg"/>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(r=>{
+    console.log('EroShop SW registered',r.scope);
+  }).catch(e=>console.log('SW error',e));
+}
+</script>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top">
+  <div class="shop-brand">
+    <div class="sname">EroShop</div>
+    <div class="ssub">Auto Repair &amp; Parts</div>
+  </div>
+  <div class="top-center">
+    <div class="date-chip" id="todayDate"></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px">
+    <div id="user-badge-slot"></div>
+    <button class="add-btn hidden" id="add-btn" onclick="openAdd()">+</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="ptitle">DASH<span>BOARD</span></div>
+  <div id="lowAlert" class="alert" style="display:none">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="lowMsg"></span>
+  </div>
+  <div class="sg">
+    <div class="sc o"><div class="slbl">Parts</div><div class="sval o" id="d-parts">0</div><div class="ssub2">in inventory</div></div>
+    <div class="sc r"><div class="slbl">Low Stock</div><div class="sval r" id="d-low">0</div><div class="ssub2">need reorder</div></div>
+    <div class="sc g"><div class="slbl">Active Jobs</div><div class="sval g" id="d-jobs">0</div><div class="ssub2">in progress</div></div>
+    <div class="sc y"><div class="slbl">Revenue</div><div class="sval y" id="d-rev">₱0</div><div class="ssub2">all time</div></div>
+    <div class="sc b"><div class="slbl">Sales</div><div class="sval b" id="d-sales">₱0</div><div class="ssub2">walk-in</div></div>
+    <div class="sc p"><div class="slbl">Mechanics</div><div class="sval p" id="d-mechs">0</div><div class="ssub2">active staff</div></div>
+  </div>
+  <div class="sh"><div class="stitle">RECENT JOBS</div></div>
+  <div class="mtbl" id="dd-repairs"></div>
+  <div class="sh"><div class="stitle">RECENT SALES</div></div>
+  <div class="mtbl" id="dd-sales"></div>
+  <div class="sh"><div class="stitle">LOW STOCK</div></div>
+  <div class="mtbl" id="dd-low"></div>
+  <div class="sh"><div class="stitle">REVENUE BREAKDOWN</div></div>
+  <div class="mtbl" style="padding:11px" id="dd-rev"></div>
+</div>
+
+<!-- PARTS / INVENTORY -->
+<div class="page" id="page-parts">
+  <div class="ptitle">INVEN<span>TORY</span></div>
+  <div style="display:flex;gap:7px;margin-bottom:9px">
+    <input class="srch" style="margin:0;flex:1" id="inv-s" placeholder="🔍 Search parts…" oninput="rInv()"/>
+    <button class="btic" style="flex:none;white-space:nowrap" onclick="showInvTable()">📋 Table</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="fcat('All',this)">All</div>
+    <div class="tab" onclick="fcat('Engine',this)">Engine</div>
+    <div class="tab" onclick="fcat('Brakes',this)">Brakes</div>
+    <div class="tab" onclick="fcat('Electrical',this)">Electrical</div>
+    <div class="tab" onclick="fcat('Body',this)">Body</div>
+    <div class="tab" onclick="fcat('Accessories',this)">Accessories</div>
+  </div>
+  <div class="cl" id="inv-list"></div>
+</div>
+
+<!-- JOBS -->
+<div class="page" id="page-jobs">
+  <div class="ptitle">REPAIR<span> JOBS</span></div>
+  <input class="srch" id="rep-s" placeholder="🔍 Search jobs…" oninput="rRep()"/>
+  <div class="tabs">
+    <div class="tab active" onclick="frs('All',this)">All</div>
+    <div class="tab" onclick="frs('Pending',this)">Pending</div>
+    <div class="tab" onclick="frs('In Progress',this)">In Progress</div>
+    <div class="tab" onclick="frs('Completed',this)">Completed</div>
+  </div>
+  <div class="cl" id="rep-list"></div>
+</div>
+
+<!-- SALES (walk-in) -->
+<div class="page" id="page-sales">
+  <div class="ptitle">WALK-IN<span> SALES</span></div>
+  <input class="srch" id="sale-s" placeholder="🔍 Search sales…" oninput="rSales()"/>
+  <div class="sg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:10px">
+    <div class="sc o"><div class="slbl">Total</div><div class="sval o" style="font-size:17px" id="sv-t">₱0</div></div>
+    <div class="sc g"><div class="slbl">Today</div><div class="sval g" style="font-size:17px" id="sv-today">₱0</div></div>
+    <div class="sc y"><div class="slbl">Transactions</div><div class="sval y" style="font-size:17px" id="sv-count">0</div></div>
+  </div>
+  <div class="cl" id="sales-list"></div>
+</div>
+
+<!-- SERVICES -->
+<div class="page" id="page-services">
+  <div class="ptitle">SERVI<span>CES</span></div>
+  <input class="srch" id="svc-s" placeholder="🔍 Search services…" oninput="rSvc()"/>
+  <div class="cl" id="svc-list"></div>
+</div>
+
+<!-- MECHANICS -->
+<div class="page" id="page-mechanics">
+  <div class="ptitle">MECHA<span>NICS</span></div>
+  <input class="srch" id="mech-s" placeholder="🔍 Search mechanics…" oninput="rMech()"/>
+  <div class="cl" id="mech-list"></div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="page" id="page-customers">
+  <div class="ptitle">CUSTO<span>MERS</span></div>
+  <input class="srch" id="cust-s" placeholder="🔍 Search customers…" oninput="rCust()"/>
+  <div class="cl" id="cust-list"></div>
+</div>
+
+<!-- REVENUE -->
+<div class="page" id="page-revenue">
+  <div class="ptitle">REVE<span>NUE</span></div>
+  <div class="sg">
+    <div class="sc o"><div class="slbl">Jobs Revenue</div><div class="sval o" id="rv-jobs">₱0</div><div class="ssub2">completed jobs</div></div>
+    <div class="sc g"><div class="slbl">Walk-in Sales</div><div class="sval g" id="rv-sales">₱0</div><div class="ssub2">direct sales</div></div>
+    <div class="sc y"><div class="slbl">Total Revenue</div><div class="sval y" id="rv-total">₱0</div><div class="ssub2">combined</div></div>
+    <div class="sc b"><div class="slbl">Labor</div><div class="sval b" id="rv-labor">₱0</div><div class="ssub2">from jobs</div></div>
+  </div>
+  <div class="sh"><div class="stitle">BREAKDOWN</div></div>
+  <div class="mtbl" style="padding:11px" id="rv-chart"></div>
+  <div class="sh"><div class="stitle">TOP SELLING PARTS</div></div>
+  <div class="mtbl" id="rv-parts"></div>
+</div>
+
+</div><!-- /content -->
+
+<!-- BOTTOM NAV — Dash, Parts, Jobs, Sales, Services, Mechanics, Customers, Revenue -->
+<nav class="bnav">
+  <button class="ntab active" onclick="showPage('dashboard',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dash
+  </button>
+  <button class="ntab" onclick="showPage('parts',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Parts
+  </button>
+  <button class="ntab" onclick="showPage('jobs',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Jobs
+  </button>
+  <button class="ntab" onclick="showPage('sales',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Sales
+  </button>
+  <button class="ntab" onclick="showPage('services',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><line x1="9" y1="12" x2="15" y2="12"/></svg>Services
+  </button>
+  <button class="ntab" onclick="showPage('mechanics',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>Mechanics
+  </button>
+  <button class="ntab" onclick="showPage('customers',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers
+  </button>
+  <button class="ntab" onclick="showPage('revenue',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Revenue
+  </button>
+</nav>
+
+<!-- ═══════ MODALS ═══════ -->
+
+<!-- RECEIPT PREVIEW -->
+<div class="mbg" id="modal-receipt">
+  <div class="rec-wrap modal" style="padding:0;height:92vh;">
+    <div class="rec-hdr">
+      <div>
+        <div style="font-family:var(--fd);font-size:15px;letter-spacing:1.5px;color:var(--acc)">RECEIPT PREVIEW</div>
+        <div style="font-size:9px;color:var(--mut);margin-top:1px">Review before printing</div>
+      </div>
+      <button class="btic" style="flex:none;padding:5px 10px" onclick="cm('receipt')">✕</button>
+    </div>
+    <div class="rec-body" style="flex:1;overflow:hidden;">
+      <iframe id="receipt-iframe" style="width:100%;height:100%;border:none;"></iframe>
+    </div>
+    <div class="rec-act">
+      <button class="btn btg" onclick="cm('receipt')">Cancel</button>
+      <button class="btn btp" onclick="doPrint()">🖨 Print Receipt</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVENTORY TABLE PREVIEW -->
+<div class="mbg" id="modal-inv-table">
+  <div class="rec-wrap modal" style="padding:0;height:92vh;">
+    <div class="rec-hdr">
+      <div>
+        <div style="font-family:var(--fd);font-size:15px;letter-spacing:1.5px;color:var(--acc)">STOCK TABLE</div>
+        <div style="font-size:9px;color:var(--mut);margin-top:1px">Tap filter to sort by stock status</div>
+      </div>
+      <button class="btic" style="flex:none;padding:5px 10px" onclick="cm('inv-table')">✕</button>
+    </div>
+    <div class="tbl-filters">
+      <button class="tbl-ft active" onclick="filterTbl('all',this)">All</button>
+      <button class="tbl-ft grn" onclick="filterTbl('ok',this)">✓ In Stock</button>
+      <button class="tbl-ft yel" onclick="filterTbl('low',this)">⚠ Low</button>
+      <button class="tbl-ft red" onclick="filterTbl('out',this)">✕ Out</button>
+    </div>
+    <div class="rec-body" style="flex:1;overflow-y:auto;overflow-x:auto;background:var(--sur2);-webkit-overflow-scrolling:touch;">
+      <div class="inv-tbl-wrap" style="padding:10px 12px;">
+        <table class="inv-tbl" id="inv-table-content"></table>
+      </div>
+    </div>
+    <div class="rec-act">
+      <button class="btn btg" style="background:var(--sur);color:var(--mut);border:1px solid var(--bdr)" onclick="cm('inv-table')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- PART MODAL -->
+<div class="mbg" id="modal-part"><div class="modal">
+  <div class="mhdl"></div>
+  <div class="mtitle" id="pt-title">ADD PART</div>
+  <div class="fg"><label>Part Name *</label><input id="p-name" placeholder="e.g. Brake Pad Set"/></div>
+  <div class="fr">
+    <div class="fg"><label>SKU</label><input id="p-sku" placeholder="BP-001"/></div>
+    <div class="fg"><label>Category</label><select id="p-cat"><option>Engine</option><option>Brakes</option><option>Electrical</option><option>Body</option><option>Accessories</option></select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Stock Qty</label><input id="p-stock" type="number" placeholder="0" min="0"/></div>
+    <div class="fg"><label>Min Level</label><input id="p-min" type="number" placeholder="5" min="0"/></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Cost (₱)</label><input id="p-cost" type="number" placeholder="0" step="0.01"/></div>
+    <div class="fg"><label>Sell Price (₱)</label><input id="p-price" type="number" placeholder="0" step="0.01"/></div>
+  </div>
+  <div class="fg"><label>Supplier</label><input id="p-supp" placeholder="Supplier name"/></div>
+  <div class="fg"><label>Notes</label><textarea id="p-notes" placeholder="Optional…"></textarea></div>
+  <div class="mact"><button class="btn btg" onclick="cm('part')">Cancel</button><button class="btn btp" onclick="savePart()">Save Part</button></div>
+</div></div>
+
+<!-- WALK-IN SALE MODAL -->
+<div class="mbg" id="modal-sale"><div class="modal">
+  <div class="mhdl"></div>
+  <div class="mtitle">NEW WALK-IN SALE</div>
+  <div class="fr">
+    <div class="fg"><label>Customer Name</label><input id="ws-cust" placeholder="Name or Walk-in"/></div>
+    <div class="fg"><label>Date</label><input id="ws-date" type="date"/></div>
+  </div>
+  <div class="cbox">
+    <div class="ctitle">🛒 Items Purchased</div>
+    <input class="calc-srch" id="ws-part-s" placeholder="🔍 Search parts to add…" oninput="renderSaleItems()"/>
+    <div id="ws-items"></div>
+    <div class="csumm" style="margin-top:8px">
+      <div class="crow tot"><span class="lbl">TOTAL</span><span class="val" id="ws-total">₱0.00</span></div>
+    </div>
+    <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr)">
+      <div class="csect" style="margin-top:0">PAYMENT</div>
+      <div class="fg" style="margin-bottom:7px">
+        <label>Bill Given by Customer (₱)</label>
+        <input id="ws-bill" type="number" placeholder="e.g. 500" step="0.01" oninput="updSaleChange()"/>
+      </div>
+      <div class="crow" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:8px 10px;margin-top:4px">
+        <span class="lbl" style="color:var(--grn);font-weight:700">CHANGE</span>
+        <span class="val" id="ws-change" style="color:var(--grn);font-size:15px;font-weight:800">₱0.00</span>
+      </div>
+    </div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="ws-notes" placeholder="Optional notes…"></textarea></div>
+  <div class="mact"><button class="btn btg" onclick="cm('sale')">Cancel</button><button class="btn btp" onclick="saveSale()">Complete Sale</button></div>
+</div></div>
+
+<!-- SERVICE MODAL -->
+<div class="mbg" id="modal-service"><div class="modal">
+  <div class="mhdl"></div>
+  <div class="mtitle" id="svc-title">ADD SERVICE</div>
+  <div class="fg"><label>Service Name *</label><input id="sv-name" placeholder="e.g. Change Oil, Tune-up…"/></div>
+  <div class="fr">
+    <div class="fg"><label>Price (₱)</label><input id="sv-price" type="number" placeholder="0" step="0.01"/></div>
+    <div class="fg"><label>Duration</label><input id="sv-dur" placeholder="e.g. 1-2 hrs"/></div>
+  </div>
+  <div class="fg"><label>Description</label><textarea id="sv-desc" placeholder="What's included…"></textarea></div>
+  <div class="mact"><button class="btn btg" onclick="cm('service')">Cancel</button><button class="btn btp" onclick="saveSvc()">Save Service</button></div>
+</div></div>
+
+<!-- JOB MODAL -->
+<div class="mbg" id="modal-repair"><div class="modal">
+  <div class="mhdl"></div>
+  <div class="mtitle" id="rt-title">NEW JOB</div>
+  <div class="fr">
+    <div class="fg"><label>Customer *</label><input id="r-cust" placeholder="Full name"/></div>
+    <div class="fg"><label>Phone</label><input id="r-phone" type="tel" placeholder="09xx"/></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Vehicle</label><input id="r-veh" placeholder="Toyota Hilux 2019"/></div>
+    <div class="fg"><label>Plate #</label><input id="r-plate" placeholder="ABC 123"/></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Mechanic</label><select id="r-mech"><option value="">-- None --</option></select></div>
+    <div class="fg"><label>Status</label><select id="r-stat"><option>Pending</option><option>In Progress</option><option>Completed</option></select></div>
+  </div>
+  <div class="cbox">
+    <div class="ctitle">⚙ Job Calculator</div>
+    <div class="csect">SERVICES</div>
+    <input class="calc-srch" id="calc-svc-s" placeholder="🔍 Search services…" oninput="renderCalcSvcs()"/>
+    <div id="calc-svcs"></div>
+    <div class="csect">PARTS FROM INVENTORY</div>
+    <input class="calc-srch" id="calc-part-s" placeholder="🔍 Search parts…" oninput="renderCalcParts()"/>
+    <div id="calc-parts"></div>
+    <div class="csect">LABOR FEE</div>
+    <div class="fg" style="margin-bottom:0"><input id="r-labor" type="number" placeholder="₱ Labor fee" step="0.01" oninput="updCalc()"/></div>
+    <div class="csumm" style="margin-top:9px">
+      <div class="crow"><span class="lbl">Services</span><span class="val" id="c-sv">₱0.00</span></div>
+      <div class="crow"><span class="lbl">Parts</span><span class="val" id="c-pt">₱0.00</span></div>
+      <div class="crow"><span class="lbl">Labor</span><span class="val" id="c-lb">₱0.00</span></div>
+      <div class="crow tot"><span class="lbl">GRAND TOTAL</span><span class="val" id="c-gt">₱0.00</span></div>
+    </div>
+    <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr)">
+      <div class="csect" style="margin-top:0">PAYMENT</div>
+      <div class="fg" style="margin-bottom:7px">
+        <label>Bill Given by Customer (₱)</label>
+        <input id="r-bill" type="number" placeholder="e.g. 5000" step="0.01" oninput="updCalc()"/>
+      </div>
+      <div class="crow" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:8px 10px;margin-top:4px">
+        <span class="lbl" style="color:var(--grn);font-weight:700">CHANGE</span>
+        <span class="val" id="c-change" style="color:var(--grn);font-size:15px;font-weight:800">₱0.00</span>
+      </div>
+    </div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="r-notes" placeholder="Additional details…"></textarea></div>
+  <div class="mact"><button class="btn btg" onclick="cm('repair')">Cancel</button><button class="btn btp" onclick="saveRepair()">Save Job</button></div>
+</div></div>
+
+<!-- MECHANIC MODAL -->
+<div class="mbg" id="modal-mechanic"><div class="modal">
+  <div class="mhdl"></div>
+  <div class="mtitle" id="mt-title">ADD MECHANIC</div>
+  <div class="fg"><label>Full Name *</label><input id="m-name" placeholder="Full name"/></div>
+  <div class="fr">
+    <div class="fg"><label>Phone</label><input id="m-phone" type="tel" placeholder="09xx"/></div>
+    <div class="fg"><label>Specialization</label><input id="m-spec" placeholder="Engine, Electrical…"/></div>
+  </div>
+  <div class="fg"><label>Facebook URL</label><input id="m-fb" placeholder="facebook.com/…"/></div>
+  <div class="fg"><label>Status</label><select id="m-stat"><option>Active</option><option>On Leave</option><option>Inactive</option></select></div>
+  <div class="mact"><button class="btn btg" onclick="cm('mechanic')">Cancel</button><button class="btn btp" onclick="saveMech()">Save Mechanic</button></div>
+</div></div>
+
+<!-- CUSTOMER MODAL -->
+<div class="mbg" id="modal-customer"><div class="modal">
+  <div class="mhdl"></div>
+  <div class="mtitle" id="ct-title">ADD CUSTOMER</div>
+  <div class="fg"><label>Full Name *</label><input id="c-name" placeholder="Full name"/></div>
+  <div class="fr">
+    <div class="fg"><label>Phone</label><input id="c-phone" type="tel" placeholder="09xx"/></div>
+    <div class="fg"><label>Facebook URL</label><input id="c-fb" placeholder="facebook.com/…"/></div>
+  </div>
+  <div class="fg"><label>Vehicle</label><input id="c-veh" placeholder="Honda Civic 2020"/></div>
+  <div class="mact"><button class="btn btg" onclick="cm('customer')">Cancel</button><button class="btn btp" onclick="saveCust()">Save Customer</button></div>
+</div></div>
+
+<!-- receipt prints via iframe -->
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let S = JSON.parse(localStorage.getItem('eroshop4')||'null') || {
+  parts:[
+    {id:1,name:'Brake Pad Set',sku:'BP-001',category:'Brakes',stock:12,min:5,cost:900,price:1750,supplier:'AutoParts Co.',notes:''},
+    {id:2,name:'Engine Oil Filter',sku:'EO-012',category:'Engine',stock:8,min:5,cost:250,price:600,supplier:'FilterPro',notes:''},
+    {id:3,name:'Alternator Belt',sku:'AB-007',category:'Engine',stock:7,min:4,cost:450,price:1100,supplier:'BeltKing',notes:''},
+    {id:4,name:'Car Battery 65Ah',sku:'CB-045',category:'Electrical',stock:2,min:3,cost:2750,price:4750,supplier:'PowerCell',notes:''},
+    {id:5,name:'Side Mirror Left',sku:'SM-L21',category:'Body',stock:5,min:2,cost:1400,price:3000,supplier:'BodyParts Inc.',notes:''},
+    {id:6,name:'Air Freshener Set',sku:'AF-100',category:'Accessories',stock:20,min:5,cost:100,price:400,supplier:'AccessoryHub',notes:''},
+  ],
+  services:[
+    {id:1,name:'Change Oil',price:350,duration:'30 min',desc:'Full engine oil change with filter check'},
+    {id:2,name:'Brake Replacement',price:500,duration:'1-2 hrs',desc:'Brake pad/shoe replacement labor'},
+    {id:3,name:'Tune-up (4 cyl)',price:800,duration:'2-3 hrs',desc:'Spark plugs, air filter, fuel filter, timing check'},
+    {id:4,name:'Wheel Alignment',price:600,duration:'1 hr',desc:'4-wheel alignment & balancing'},
+    {id:5,name:'A/C Check & Service',price:1200,duration:'2-3 hrs',desc:'Refrigerant check, evaporator clean, compressor check'},
+    {id:6,name:'General Check-up',price:250,duration:'30 min',desc:'Full vehicle inspection & diagnostic'},
+  ],
+  repairs:[
+    {id:1,customer:'Juan dela Cruz',phone:'09171234567',vehicle:'Toyota Hilux 2019',plate:'ABC 123',mechanic:'Boyet Reyes',laborFee:800,selectedSvcs:[{id:1,name:'Change Oil',price:350}],selectedParts:[{id:1,name:'Brake Pad Set',qty:2,price:1750}],totalCost:4650,status:'Completed',notes:'',date:'2026-04-10'},
+    {id:2,customer:'Maria Santos',phone:'09281112222',vehicle:'Honda Civic 2022',plate:'XYZ 789',mechanic:'Manny Torres',laborFee:300,selectedSvcs:[{id:2,name:'Brake Replacement',price:500}],selectedParts:[{id:2,name:'Engine Oil Filter',qty:1,price:600}],totalCost:1400,status:'In Progress',notes:'',date:'2026-04-20'},
+    {id:3,customer:'Pedro Reyes',phone:'09394445555',vehicle:'Ford Ranger 2021',plate:'DEF 456',mechanic:'',laborFee:500,selectedSvcs:[],selectedParts:[],totalCost:500,status:'Pending',notes:'',date:'2026-04-22'},
+  ],
+  walkSales:[
+    {id:1,customer:'Walk-in',items:[{id:6,name:'Air Freshener Set',qty:3,price:400}],total:1200,notes:'',date:'2026-04-15'},
+  ],
+  customers:[
+    {id:1,name:'Juan dela Cruz',phone:'09171234567',fb:'',vehicle:'Toyota Hilux 2019'},
+    {id:2,name:'Maria Santos',phone:'09281112222',fb:'',vehicle:'Honda Civic 2022'},
+    {id:3,name:'Pedro Reyes',phone:'09394445555',fb:'',vehicle:'Ford Ranger 2021'},
+  ],
+  mechanics:[
+    {id:1,name:'Boyet Reyes',phone:'09501112233',spec:'Engine, Brakes',fb:'',status:'Active'},
+    {id:2,name:'Manny Torres',phone:'09602223344',spec:'Electrical',fb:'',status:'Active'},
+  ],
+  nid:{part:7,service:7,repair:4,sale:2,customer:4,mechanic:3}
+};
+function save(){localStorage.setItem('eroshop4',JSON.stringify(S));}
+
+// ══════════════════════════════════════════
+//  JOB CALC STATE
+// ══════════════════════════════════════════
+let jobSvcs={}, jobParts={};
+// walk-in sale cart
+let saleCart={};  // {partId: qty}
+let editId={part:null,service:null,repair:null,customer:null,mechanic:null};
+
+function initCalc(repair){
+  jobSvcs={};jobParts={};
+  if(repair){
+    (repair.selectedSvcs||[]).forEach(s=>{jobSvcs[s.id]=true;});
+    (repair.selectedParts||[]).forEach(p=>{jobParts[p.id]=p.qty;});
+  }
+}
+
+// ══════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════
+let curCat='All',curRS='All',curPg='dashboard';
+const PAGE_ADD_MAP={parts:'part',jobs:'repair',sales:'sale',services:'service',mechanics:'mechanic',customers:'customer'};
+
+function showPage(pg,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  el.classList.add('active');
+  curPg=pg;
+  const ab=document.getElementById('add-btn');
+  if(PAGE_ADD_MAP[pg]){ab.classList.remove('hidden');}
+  else{ab.classList.add('hidden');}
+  const renders={dashboard:rDash,parts:rInv,jobs:rRep,sales:rSales,services:rSvc,mechanics:rMech,customers:rCust,revenue:rRevenue};
+  if(renders[pg])renders[pg]();
+}
+function openAdd(){
+  const t=PAGE_ADD_MAP[curPg];
+  if(t)om(t);
+}
+function fcat(c,el){curCat=c;document.querySelectorAll('#page-parts .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');rInv();}
+function frs(s,el){curRS=s;document.querySelectorAll('#page-jobs .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');rRep();}
+
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+function om(type){
+  if(type==='repair'){
+    const sel=document.getElementById('r-mech');
+    sel.innerHTML='<option value="">-- None --</option>'+S.mechanics.map(m=>`<option value="${m.name}">${m.name}</option>`).join('');
+    document.getElementById('calc-svc-s').value='';
+    document.getElementById('calc-part-s').value='';
+    if(!editId.repair){
+      initCalc(null);
+      ['r-cust','r-phone','r-veh','r-plate','r-labor','r-bill','r-notes'].forEach(i=>document.getElementById(i).value='');
+      document.getElementById('r-stat').value='Pending';
+      document.getElementById('rt-title').textContent='NEW JOB';
+    }
+    renderCalcSvcs();renderCalcParts();updCalc();
+  }
+  if(type==='part'&&!editId.part){
+    document.getElementById('pt-title').textContent='ADD PART';
+    ['p-name','p-sku','p-stock','p-min','p-cost','p-price','p-supp','p-notes'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('p-cat').value='Engine';
+  }
+  if(type==='sale'){
+    saleCart={};
+    document.getElementById('ws-cust').value='';
+    document.getElementById('ws-notes').value='';
+    document.getElementById('ws-bill').value='';
+    document.getElementById('ws-date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('ws-part-s').value='';
+    renderSaleItems();
+  }
+  if(type==='service'&&!editId.service){
+    document.getElementById('svc-title').textContent='ADD SERVICE';
+    ['sv-name','sv-price','sv-dur','sv-desc'].forEach(i=>document.getElementById(i).value='');
+  }
+  if(type==='mechanic'&&!editId.mechanic){
+    document.getElementById('mt-title').textContent='ADD MECHANIC';
+    ['m-name','m-phone','m-spec','m-fb'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('m-stat').value='Active';
+  }
+  if(type==='customer'&&!editId.customer){
+    document.getElementById('ct-title').textContent='ADD CUSTOMER';
+    ['c-name','c-phone','c-fb','c-veh'].forEach(i=>document.getElementById(i).value='');
+  }
+  document.getElementById('modal-'+type).classList.add('open');
+}
+function cm(type){
+  document.getElementById('modal-'+type).classList.remove('open');
+  if(editId[type]!==undefined)editId[type]=null;
+}
+document.querySelectorAll('.mbg').forEach(bg=>bg.addEventListener('click',function(e){if(e.target===this)cm(this.id.replace('modal-',''));}));
+
+// ══════════════════════════════════════════
+//  WALK-IN SALE CART
+// ══════════════════════════════════════════
+function renderSaleItems(){
+  const q=(document.getElementById('ws-part-s').value||'').toLowerCase();
+  const el=document.getElementById('ws-items');
+  // Show selected items + search results
+  const visible=S.parts.filter(p=>{
+    const has=(saleCart[p.id]||0)>0;
+    const match=!q||p.name.toLowerCase().includes(q)||(p.sku||'').toLowerCase().includes(q);
+    return has||match;
+  });
+  if(!visible.length){el.innerHTML=`<div style="font-size:11px;color:var(--mut);padding:4px 0">Type to search parts from inventory.</div>`;updSaleTotal();return;}
+  el.innerHTML=visible.map(p=>{
+    const qty=saleCart[p.id]||0;
+    const out=p.stock<=0&&qty===0;
+    return `<div class="prow" style="opacity:${out?.5:1}">
+      <div class="prow-info">
+        <div class="prow-name">${p.name}</div>
+        <div class="prow-sub">${p.sku||'—'} · Stock: <span style="color:${p.stock<=p.min?'var(--yel)':'var(--grn)'}">${p.stock}</span> · <span class="price">₱${p.price.toLocaleString()}</span></div>
+      </div>
+      <div class="prow-right">
+        <button class="qty-btn" onclick="saleQty(${p.id},-1)" ${qty<=0?'disabled':''}>−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="saleQty(${p.id},1)" ${p.stock<=0&&qty<=0?'disabled':''}>+</button>
+      </div>
+      <div class="prow-price">${qty>0?`₱${(qty*p.price).toLocaleString()}`:''}</div>
+    </div>`;
+  }).join('');
+  updSaleTotal();
+}
+function saleQty(id,d){
+  const p=S.parts.find(x=>x.id===id);
+  const cur=saleCart[id]||0;
+  const nq=cur+d;
+  if(nq<0)return;
+  if(d>0&&p.stock<=0){alert(`${p.name} is out of stock!`);return;}
+  if(d>0&&cur>=p.stock){alert(`Only ${p.stock} left in stock!`);return;}
+  if(nq===0)delete saleCart[id];
+  else saleCart[id]=nq;
+  renderSaleItems();
+}
+function updSaleTotal(){
+  const t=S.parts.reduce((a,p)=>a+(saleCart[p.id]||0)*p.price,0);
+  document.getElementById('ws-total').textContent='₱'+t.toFixed(2);
+  updSaleChange();
+}
+function updSaleChange(){
+  const t=S.parts.reduce((a,p)=>a+(saleCart[p.id]||0)*p.price,0);
+  const bill=parseFloat(document.getElementById('ws-bill').value)||0;
+  const chg=bill-t;
+  const el=document.getElementById('ws-change');
+  if(bill>0){el.textContent=(chg>=0?'₱'+chg.toFixed(2):'⚠ Short ₱'+Math.abs(chg).toFixed(2));el.style.color=chg>=0?'var(--grn)':'var(--red)';}
+  else{el.textContent='₱0.00';el.style.color='var(--grn)';}
+}
+function saveSale(){
+  const items=S.parts.filter(p=>(saleCart[p.id]||0)>0).map(p=>({id:p.id,name:p.name,qty:saleCart[p.id],price:p.price}));
+  if(!items.length){alert('Add at least one item to the sale.');return;}
+  // Deduct stock
+  items.forEach(it=>{const p=S.parts.find(x=>x.id===it.id);if(p)p.stock-=it.qty;});
+  const total=items.reduce((a,it)=>a+it.qty*it.price,0);
+  const bill=parseFloat(document.getElementById('ws-bill').value)||0;
+  const change=bill>0?Math.max(0,bill-total):null;
+  const sale={id:S.nid.sale++,customer:document.getElementById('ws-cust').value.trim()||'Walk-in',items,total,bill:bill||null,change,notes:document.getElementById('ws-notes').value.trim(),date:document.getElementById('ws-date').value};
+  S.walkSales.push(sale);
+  save();cm('sale');rSales();rDash();rInv();
+  // Show receipt immediately
+  setTimeout(()=>previewSaleReceipt(sale.id),200);
+}
+
+// ══════════════════════════════════════════
+//  PARTS CRUD
+// ══════════════════════════════════════════
+function savePart(){
+  const name=document.getElementById('p-name').value.trim();
+  if(!name){alert('Part name required');return;}
+  const p={id:editId.part||S.nid.part++,name,sku:document.getElementById('p-sku').value.trim(),category:document.getElementById('p-cat').value,stock:parseInt(document.getElementById('p-stock').value)||0,min:parseInt(document.getElementById('p-min').value)||0,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,supplier:document.getElementById('p-supp').value.trim(),notes:document.getElementById('p-notes').value.trim()};
+  if(editId.part){const i=S.parts.findIndex(x=>x.id===editId.part);S.parts[i]=p;}else S.parts.push(p);
+  save();cm('part');rInv();rDash();
+}
+function editPart(id){
+  const p=S.parts.find(x=>x.id===id);editId.part=id;
+  document.getElementById('pt-title').textContent='EDIT PART';
+  document.getElementById('p-name').value=p.name;document.getElementById('p-sku').value=p.sku;document.getElementById('p-cat').value=p.category;document.getElementById('p-stock').value=p.stock;document.getElementById('p-min').value=p.min;document.getElementById('p-cost').value=p.cost;document.getElementById('p-price').value=p.price;document.getElementById('p-supp').value=p.supplier;document.getElementById('p-notes').value=p.notes;
+  document.getElementById('modal-part').classList.add('open');
+}
+function delPart(id){if(!confirm('Delete this part?'))return;S.parts=S.parts.filter(p=>p.id!==id);save();rInv();rDash();}
+function rInv(){
+  const q=(document.getElementById('inv-s').value||'').toLowerCase();
+  let parts=S.parts.filter(p=>(curCat==='All'||p.category===curCat)&&(p.name.toLowerCase().includes(q)||(p.sku||'').toLowerCase().includes(q)));
+  const el=document.getElementById('inv-list');
+  if(!parts.length){el.innerHTML=`<div class="empty">No parts found</div>`;return;}
+  el.innerHTML=parts.map(p=>{
+    const low=p.stock<=p.min,out=p.stock===0;
+    const bc=out?'br':low?'by':'bg';const bs=out?'Out of Stock':low?'Low Stock':'In Stock';
+    return `<div class="ic"><div class="ich"><div><div class="iname">${p.name}</div><div style="margin-top:3px"><span class="tag">${p.sku||'No SKU'}</span> <span class="tag">${p.category}</span></div></div><span class="b ${bc}">${bs}</span></div><div class="imeta"><span class="tag">Stock: <strong style="color:${out?'var(--red)':low?'var(--yel)':'var(--grn)'}">${p.stock}</strong></span><span class="tag">Min: ${p.min}</span><span class="tag">Cost: <span class="price">₱${p.cost.toLocaleString()}</span></span><span class="tag">Price: <span class="price">₱${p.price.toLocaleString()}</span></span>${p.supplier?`<span class="tag">${p.supplier}</span>`:''}</div><div class="iact"><button class="btic" onclick="editPart(${p.id})">✏ Edit</button><button class="btic dl" onclick="delPart(${p.id})">✕ Delete</button></div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  INVENTORY TABLE
+// ══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  SERVICES CRUD
+// ══════════════════════════════════════════
+function saveSvc(){
+  const name=document.getElementById('sv-name').value.trim();if(!name){alert('Name required');return;}
+  const o={id:editId.service||S.nid.service++,name,price:parseFloat(document.getElementById('sv-price').value)||0,duration:document.getElementById('sv-dur').value.trim(),desc:document.getElementById('sv-desc').value.trim()};
+  if(editId.service){const i=S.services.findIndex(x=>x.id===editId.service);S.services[i]=o;}else S.services.push(o);
+  save();cm('service');rSvc();
+}
+function editSvc(id){
+  const s=S.services.find(x=>x.id===id);editId.service=id;
+  document.getElementById('svc-title').textContent='EDIT SERVICE';
+  document.getElementById('sv-name').value=s.name;document.getElementById('sv-price').value=s.price;document.getElementById('sv-dur').value=s.duration||'';document.getElementById('sv-desc').value=s.desc||'';
+  document.getElementById('modal-service').classList.add('open');
+}
+function delSvc(id){if(!confirm('Delete?'))return;S.services=S.services.filter(s=>s.id!==id);save();rSvc();}
+function rSvc(){
+  const q=(document.getElementById('svc-s').value||'').toLowerCase();
+  const el=document.getElementById('svc-list');
+  const f=S.services.filter(s=>s.name.toLowerCase().includes(q)||(s.desc||'').toLowerCase().includes(q));
+  if(!f.length){el.innerHTML=`<div class="empty">${S.services.length?'No match.':'No services yet. Tap + to add.'}</div>`;return;}
+  el.innerHTML=f.map(s=>`<div class="ic"><div class="ich"><div><div class="iname">${s.name}</div>${s.duration?`<div style="font-size:10px;color:var(--mut);margin-top:2px">⏱ ${s.duration}</div>`:''}</div><span class="price" style="font-size:15px;font-weight:800">₱${s.price.toLocaleString()}</span></div>${s.desc?`<div style="font-size:11px;color:var(--mut);margin-bottom:6px">${s.desc}</div>`:''}<div class="iact"><button class="btic" onclick="editSvc(${s.id})">✏ Edit</button><button class="btic dl" onclick="delSvc(${s.id})">✕ Delete</button></div></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  JOB CALC RENDER
+// ══════════════════════════════════════════
+function renderCalcSvcs(){
+  const q=(document.getElementById('calc-svc-s').value||'').toLowerCase();
+  const el=document.getElementById('calc-svcs');
+  const f=S.services.filter(s=>s.name.toLowerCase().includes(q)||(s.desc||'').toLowerCase().includes(q));
+  if(!S.services.length){el.innerHTML=`<div style="font-size:11px;color:var(--mut)">No services yet.</div>`;return;}
+  if(!f.length){el.innerHTML=`<div style="font-size:11px;color:var(--mut)">No match.</div>`;return;}
+  el.innerHTML=f.map(s=>{
+    const sel=!!jobSvcs[s.id];
+    return `<div class="srow${sel?' sel':''}" onclick="toggleSvc(${s.id})">
+      <div class="srow-info"><div class="srow-name">${s.name}</div>${s.duration?`<div style="font-size:9px;color:var(--mut)">${s.duration}</div>`:''}</div>
+      <div class="srow-price">₱${s.price.toLocaleString()}</div>
+      <div class="srow-chk">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+function renderCalcParts(){
+  const q=(document.getElementById('calc-part-s').value||'').toLowerCase();
+  const el=document.getElementById('calc-parts');
+  const f=S.parts.filter(p=>{const has=(jobParts[p.id]||0)>0;const match=!q||p.name.toLowerCase().includes(q)||(p.sku||'').toLowerCase().includes(q);return has||match;});
+  if(!f.length){el.innerHTML=`<div style="font-size:11px;color:var(--mut)">Type to search parts.</div>`;return;}
+  el.innerHTML=f.map(p=>{
+    const qty=jobParts[p.id]||0;
+    const dis=p.stock<=0&&qty===0;
+    return `<div class="prow" style="opacity:${dis?.5:1}">
+      <div class="prow-info"><div class="prow-name">${p.name}</div><div class="prow-sub">${p.sku||'—'} · Stock: <span style="color:${p.stock<=p.min?'var(--yel)':'var(--grn)'}">${p.stock}</span></div></div>
+      <div class="prow-right">
+        <button class="qty-btn" onclick="changeQty(${p.id},-1)" ${qty<=0?'disabled':''}>−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="changeQty(${p.id},1)" ${p.stock<=0&&qty<=0?'disabled':''}>+</button>
+      </div>
+      <div class="prow-price">${qty>0?`₱${(qty*p.price).toLocaleString()}`:''}</div>
+    </div>`;
+  }).join('');
+}
+function toggleSvc(id){jobSvcs[id]=!jobSvcs[id];renderCalcSvcs();updCalc();}
+function changeQty(id,d){
+  const p=S.parts.find(x=>x.id===id);const cur=jobParts[id]||0;const nq=cur+d;
+  if(nq<0)return;
+  if(d>0&&p.stock<=0){alert(`${p.name} is out of stock!`);return;}
+  if(d>0&&cur>=p.stock){alert(`Only ${p.stock} available!`);return;}
+  if(nq===0)delete jobParts[id];else jobParts[id]=nq;
+  renderCalcParts();updCalc();
+}
+function updCalc(){
+  const sv=S.services.filter(s=>jobSvcs[s.id]).reduce((a,s)=>a+s.price,0);
+  const pt=S.parts.reduce((a,p)=>a+(jobParts[p.id]||0)*p.price,0);
+  const lb=parseFloat(document.getElementById('r-labor').value)||0;
+  const grand=sv+pt+lb;
+  document.getElementById('c-sv').textContent='₱'+sv.toFixed(2);
+  document.getElementById('c-pt').textContent='₱'+pt.toFixed(2);
+  document.getElementById('c-lb').textContent='₱'+lb.toFixed(2);
+  document.getElementById('c-gt').textContent='₱'+grand.toFixed(2);
+  const bill=parseFloat(document.getElementById('r-bill').value)||0;
+  const chg=bill-grand;
+  const chgEl=document.getElementById('c-change');
+  if(bill>0){chgEl.textContent=(chg>=0?'₱'+chg.toFixed(2):'⚠ Short ₱'+Math.abs(chg).toFixed(2));chgEl.style.color=chg>=0?'var(--grn)':'var(--red)';}
+  else{chgEl.textContent='₱0.00';chgEl.style.color='var(--grn)';}
+}
+
+// ══════════════════════════════════════════
+//  JOB CRUD
+// ══════════════════════════════════════════
+function saveRepair(){
+  const cust=document.getElementById('r-cust').value.trim();if(!cust){alert('Customer required');return;}
+  const selSvcs=S.services.filter(s=>jobSvcs[s.id]).map(s=>({id:s.id,name:s.name,price:s.price}));
+  const selParts=S.parts.filter(p=>jobParts[p.id]>0).map(p=>({id:p.id,name:p.name,qty:jobParts[p.id],price:p.price}));
+  const lb=parseFloat(document.getElementById('r-labor').value)||0;
+  const svT=selSvcs.reduce((a,s)=>a+s.price,0);
+  const ptT=selParts.reduce((a,p)=>a+p.qty*p.price,0);
+  if(editId.repair){
+    const old=S.repairs.find(x=>x.id===editId.repair);
+    (old.selectedParts||[]).forEach(op=>{const pp=S.parts.find(x=>x.id===op.id);if(pp)pp.stock+=op.qty;});
+  }
+  selParts.forEach(sp=>{const pp=S.parts.find(x=>x.id===sp.id);if(pp)pp.stock-=sp.qty;});
+  const r={id:editId.repair||S.nid.repair++,customer:cust,phone:document.getElementById('r-phone').value.trim(),vehicle:document.getElementById('r-veh').value.trim(),plate:document.getElementById('r-plate').value.trim(),mechanic:document.getElementById('r-mech').value,laborFee:lb,selectedSvcs:selSvcs,selectedParts:selParts,totalCost:svT+ptT+lb,bill:parseFloat(document.getElementById('r-bill').value)||null,status:document.getElementById('r-stat').value,notes:document.getElementById('r-notes').value.trim(),date:new Date().toISOString().split('T')[0]};
+  if(editId.repair){const i=S.repairs.findIndex(x=>x.id===editId.repair);S.repairs[i]=r;}else S.repairs.push(r);
+  save();cm('repair');rRep();rDash();rInv();
+}
+function editRepair(id){
+  const r=S.repairs.find(x=>x.id===id);editId.repair=id;
+  const sel=document.getElementById('r-mech');
+  sel.innerHTML='<option value="">-- None --</option>'+S.mechanics.map(m=>`<option value="${m.name}">${m.name}</option>`).join('');
+  document.getElementById('rt-title').textContent='EDIT JOB';
+  document.getElementById('r-cust').value=r.customer;document.getElementById('r-phone').value=r.phone;document.getElementById('r-veh').value=r.vehicle;document.getElementById('r-plate').value=r.plate;document.getElementById('r-mech').value=r.mechanic||'';document.getElementById('r-stat').value=r.status;document.getElementById('r-labor').value=r.laborFee||0;document.getElementById('r-bill').value=r.bill||'';document.getElementById('r-notes').value=r.notes;
+  document.getElementById('calc-svc-s').value='';document.getElementById('calc-part-s').value='';
+  initCalc(r);renderCalcSvcs();renderCalcParts();updCalc();
+  document.getElementById('modal-repair').classList.add('open');
+}
+function delRepair(id){
+  if(!confirm('Delete this job?'))return;
+  const r=S.repairs.find(x=>x.id===id);
+  (r.selectedParts||[]).forEach(sp=>{const p=S.parts.find(x=>x.id===sp.id);if(p)p.stock+=sp.qty;});
+  S.repairs=S.repairs.filter(x=>x.id!==id);save();rRep();rDash();rInv();
+}
+function rRep(){
+  const q=(document.getElementById('rep-s').value||'').toLowerCase();
+  let reps=S.repairs.filter(r=>(curRS==='All'||r.status===curRS)&&(r.customer.toLowerCase().includes(q)||(r.vehicle||'').toLowerCase().includes(q))).slice().reverse();
+  const el=document.getElementById('rep-list');
+  if(!reps.length){el.innerHTML=`<div class="empty">No jobs found</div>`;return;}
+  el.innerHTML=reps.map(r=>{
+    const bc=r.status==='Completed'?'bg':r.status==='In Progress'?'bo':'by';
+    const svT=(r.selectedSvcs||[]).reduce((a,s)=>a+s.price,0);
+    const ptT=(r.selectedParts||[]).reduce((a,p)=>a+p.qty*p.price,0);
+    const svN=(r.selectedSvcs||[]).map(s=>s.name).join(', ')||'—';
+    const ptN=(r.selectedParts||[]).map(p=>`${p.name}×${p.qty}`).join(', ')||'—';
+    return `<div class="ic">
+      <div class="ich"><div><div class="iname">${r.customer}</div><div style="font-size:10px;color:var(--mut);margin-top:2px">${r.vehicle||''}${r.plate?' · '+r.plate:''}</div></div><span class="b ${bc}">${r.status}</span></div>
+      <div class="imeta"><span class="tag">#${r.id}</span><span class="tag">${r.date}</span>${r.mechanic?`<span class="b bp">🔧 ${r.mechanic}</span>`:''}</div>
+      <div style="font-size:11px;margin-bottom:4px"><span style="color:var(--mut)">Services: </span>${svN}</div>
+      <div style="font-size:11px;margin-bottom:6px"><span style="color:var(--mut)">Parts: </span>${ptN}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px">
+        <span class="tag">Svcs: <span class="price">₱${svT.toLocaleString()}</span></span>
+        <span class="tag">Parts: <span class="price">₱${ptT.toLocaleString()}</span></span>
+        <span class="tag">Labor: <span class="price">₱${(r.laborFee||0).toLocaleString()}</span></span>
+        <span class="tag">Total: <span class="price" style="font-weight:800">₱${(r.totalCost||0).toLocaleString()}</span></span>
+      </div>
+      <div class="iact">
+        <button class="btic" onclick="editRepair(${r.id})">✏ Edit</button>
+        <button class="btic prnt" onclick="previewJobReceipt(${r.id})">🖨 Receipt</button>
+        <button class="btic dl" onclick="delRepair(${r.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  WALK-IN SALES RENDER
+// ══════════════════════════════════════════
+function rSales(){
+  const q=(document.getElementById('sale-s').value||'').toLowerCase();
+  const today=new Date().toISOString().split('T')[0];
+  const all=S.walkSales;
+  const total=all.reduce((a,s)=>a+s.total,0);
+  const todayAmt=all.filter(s=>s.date===today).reduce((a,s)=>a+s.total,0);
+  document.getElementById('sv-t').textContent='₱'+total.toLocaleString();
+  document.getElementById('sv-today').textContent='₱'+todayAmt.toLocaleString();
+  document.getElementById('sv-count').textContent=all.length;
+  const el=document.getElementById('sales-list');
+  const f=all.filter(s=>s.customer.toLowerCase().includes(q)||(s.items||[]).some(i=>i.name.toLowerCase().includes(q))).slice().reverse();
+  if(!f.length){el.innerHTML=`<div class="empty">No sales yet. Tap + to record a sale.</div>`;return;}
+  el.innerHTML=f.map(s=>{
+    const itemStr=s.items.map(i=>`${i.name}×${i.qty}`).join(', ');
+    return `<div class="ic">
+      <div class="ich"><div><div class="iname">${s.customer}</div><div style="font-size:10px;color:var(--mut);margin-top:2px">${s.date}</div></div><span class="price" style="font-size:14px;font-weight:800">₱${s.total.toLocaleString()}</span></div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:6px">${itemStr}</div>
+      <div class="iact">
+        <button class="btic prnt" onclick="previewSaleReceipt(${s.id})" style="flex:none">🖨 Receipt</button>
+        <button class="btic dl" onclick="delSale(${s.id})" style="flex:none">✕ Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function delSale(id){
+  if(!confirm('Delete this sale and restore stock?'))return;
+  const s=S.walkSales.find(x=>x.id===id);
+  (s.items||[]).forEach(it=>{const p=S.parts.find(x=>x.id===it.id);if(p)p.stock+=it.qty;});
+  S.walkSales=S.walkSales.filter(x=>x.id!==id);
+  save();rSales();rDash();rInv();
+}
+
+// ══════════════════════════════════════════
+//  MECHANICS
+// ══════════════════════════════════════════
+function saveMech(){
+  const name=document.getElementById('m-name').value.trim();if(!name){alert('Name required');return;}
+  const o={id:editId.mechanic||S.nid.mechanic++,name,phone:document.getElementById('m-phone').value.trim(),spec:document.getElementById('m-spec').value.trim(),fb:document.getElementById('m-fb').value.trim(),status:document.getElementById('m-stat').value};
+  if(editId.mechanic){const i=S.mechanics.findIndex(x=>x.id===editId.mechanic);S.mechanics[i]=o;}else S.mechanics.push(o);
+  save();cm('mechanic');rMech();
+}
+function editMech(id){
+  const m=S.mechanics.find(x=>x.id===id);editId.mechanic=id;
+  document.getElementById('mt-title').textContent='EDIT MECHANIC';
+  document.getElementById('m-name').value=m.name;document.getElementById('m-phone').value=m.phone;document.getElementById('m-spec').value=m.spec||'';document.getElementById('m-fb').value=m.fb||'';document.getElementById('m-stat').value=m.status;
+  document.getElementById('modal-mechanic').classList.add('open');
+}
+function delMech(id){if(!confirm('Delete?'))return;S.mechanics=S.mechanics.filter(m=>m.id!==id);save();rMech();}
+function fbLink(fb){if(!fb)return'';const url=fb.startsWith('http')?fb:'https://'+fb;return`<a class="fbl" href="${url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>Facebook</a>`;}
+function rMech(){
+  const q=(document.getElementById('mech-s').value||'').toLowerCase();
+  const el=document.getElementById('mech-list');
+  const f=S.mechanics.filter(m=>m.name.toLowerCase().includes(q));
+  if(!f.length){el.innerHTML=`<div class="empty">No mechanics found</div>`;return;}
+  el.innerHTML=f.map(m=>{const j=S.repairs.filter(r=>r.mechanic===m.name).length;const bc=m.status==='Active'?'bg':m.status==='On Leave'?'by':'br';return `<div class="ic"><div class="ich"><div><div class="iname">🔧 ${m.name}</div>${m.phone?`<div style="font-size:10px;color:var(--mut);margin-top:2px">📞 ${m.phone}</div>`:''}</div><span class="b ${bc}">${m.status}</span></div><div class="imeta">${m.spec?`<span class="tag">⚙ ${m.spec}</span>`:''}<span class="tag">${j} job${j!==1?'s':''}</span></div>${fbLink(m.fb)}<div class="iact"><button class="btic" onclick="editMech(${m.id})">✏ Edit</button><button class="btic dl" onclick="delMech(${m.id})">✕ Delete</button></div></div>`;}).join('');
+}
+
+// ══════════════════════════════════════════
+//  CUSTOMERS
+// ══════════════════════════════════════════
+function saveCust(){
+  const name=document.getElementById('c-name').value.trim();if(!name){alert('Name required');return;}
+  const o={id:editId.customer||S.nid.customer++,name,phone:document.getElementById('c-phone').value.trim(),fb:document.getElementById('c-fb').value.trim(),vehicle:document.getElementById('c-veh').value.trim()};
+  if(editId.customer){const i=S.customers.findIndex(x=>x.id===editId.customer);S.customers[i]=o;}else S.customers.push(o);
+  save();cm('customer');rCust();
+}
+function editCust(id){
+  const c=S.customers.find(x=>x.id===id);editId.customer=id;
+  document.getElementById('ct-title').textContent='EDIT CUSTOMER';
+  document.getElementById('c-name').value=c.name;document.getElementById('c-phone').value=c.phone;document.getElementById('c-fb').value=c.fb||'';document.getElementById('c-veh').value=c.vehicle;
+  document.getElementById('modal-customer').classList.add('open');
+}
+function delCust(id){if(!confirm('Delete?'))return;S.customers=S.customers.filter(c=>c.id!==id);save();rCust();}
+function rCust(){
+  const q=(document.getElementById('cust-s').value||'').toLowerCase();
+  const el=document.getElementById('cust-list');
+  const f=S.customers.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
+  if(!f.length){el.innerHTML=`<div class="empty">No customers found</div>`;return;}
+  el.innerHTML=f.map(c=>{
+    const v=S.repairs.filter(r=>r.customer===c.name).length;
+    const sp=S.repairs.filter(r=>r.customer===c.name&&r.status==='Completed').reduce((a,r)=>a+r.totalCost,0);
+    const ws=S.walkSales.filter(s=>s.customer===c.name).reduce((a,s)=>a+s.total,0);
+    return `<div class="ic"><div class="ich"><div><div class="iname">${c.name}</div>${c.phone?`<div style="font-size:10px;color:var(--mut);margin-top:2px">📞 ${c.phone}</div>`:''}</div><span class="b bb">${v} job${v!==1?'s':''}</span></div><div class="imeta">${c.vehicle?`<span class="tag">🚗 ${c.vehicle}</span>`:''}<span class="tag">Jobs: <span class="price">₱${sp.toLocaleString()}</span></span><span class="tag">Sales: <span class="price">₱${ws.toLocaleString()}</span></span></div>${fbLink(c.fb)}<div class="iact"><button class="btic" onclick="editCust(${c.id})">✏ Edit</button><button class="btic dl" onclick="delCust(${c.id})">✕ Delete</button></div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  REVENUE PAGE
+// ══════════════════════════════════════════
+function rRevenue(){
+  const jobRev=S.repairs.filter(r=>r.status==='Completed').reduce((a,r)=>a+r.totalCost,0);
+  const laborRev=S.repairs.filter(r=>r.status==='Completed').reduce((a,r)=>a+(r.laborFee||0),0);
+  const walkRev=S.walkSales.reduce((a,s)=>a+s.total,0);
+  const total=jobRev+walkRev;
+  document.getElementById('rv-jobs').textContent='₱'+jobRev.toLocaleString();
+  document.getElementById('rv-sales').textContent='₱'+walkRev.toLocaleString();
+  document.getElementById('rv-total').textContent='₱'+total.toLocaleString();
+  document.getElementById('rv-labor').textContent='₱'+laborRev.toLocaleString();
+  const mx=Math.max(jobRev,walkRev,laborRev,1);
+  document.getElementById('rv-chart').innerHTML=`
+    <div class="rrow"><div class="rlbl">Job Revenue</div><div class="rbbg"><div class="rb" style="width:${(jobRev/mx*100).toFixed(1)}%;background:var(--acc)"></div></div><div class="rval" style="color:var(--acc)">₱${jobRev.toLocaleString()}</div></div>
+    <div class="rrow"><div class="rlbl">Walk-in Sales</div><div class="rbbg"><div class="rb" style="width:${(walkRev/mx*100).toFixed(1)}%;background:var(--grn)"></div></div><div class="rval" style="color:var(--grn)">₱${walkRev.toLocaleString()}</div></div>
+    <div class="rrow"><div class="rlbl">Labor</div><div class="rbbg"><div class="rb" style="width:${(laborRev/mx*100).toFixed(1)}%;background:var(--blu)"></div></div><div class="rval" style="color:var(--blu)">₱${laborRev.toLocaleString()}</div></div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between">
+      <span style="font-size:10px;color:var(--mut)">GRAND TOTAL</span>
+      <span style="font-family:var(--fm);font-size:14px;color:var(--acc);font-weight:700">₱${total.toLocaleString()}</span>
+    </div>`;
+  // Top selling parts from walk-in sales + jobs
+  const partSales={};
+  S.walkSales.forEach(s=>s.items.forEach(i=>{partSales[i.name]=(partSales[i.name]||0)+i.qty*i.price;}));
+  S.repairs.forEach(r=>(r.selectedParts||[]).forEach(p=>{partSales[p.name]=(partSales[p.name]||0)+p.qty*p.price;}));
+  const top=Object.entries(partSales).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const rv=document.getElementById('rv-parts');
+  rv.innerHTML=top.length?top.map(([name,amt])=>`<div class="mrow"><div class="mleft"><div class="mn">${name}</div></div><span class="price">₱${amt.toLocaleString()}</span></div>`).join(''):`<div class="mrow"><span style="color:var(--mut);font-size:12px">No part sales yet</span></div>`;
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════
+function rDash(){
+  const low=S.parts.filter(p=>p.stock<=p.min);
+  const active=S.repairs.filter(r=>r.status!=='Completed').length;
+  const jobRev=S.repairs.filter(r=>r.status==='Completed').reduce((a,r)=>a+r.totalCost,0);
+  const walkRev=S.walkSales.reduce((a,s)=>a+s.total,0);
+  const activeMechs=S.mechanics.filter(m=>m.status==='Active').length;
+  document.getElementById('d-parts').textContent=S.parts.length;
+  document.getElementById('d-low').textContent=low.length;
+  document.getElementById('d-jobs').textContent=active;
+  document.getElementById('d-rev').textContent='₱'+(jobRev+walkRev).toLocaleString();
+  document.getElementById('d-sales').textContent='₱'+walkRev.toLocaleString();
+  document.getElementById('d-mechs').textContent=activeMechs;
+  const al=document.getElementById('lowAlert');
+  if(low.length){al.style.display='flex';document.getElementById('lowMsg').textContent=`⚠ ${low.length} item(s) low: ${low.map(p=>p.name).join(', ')}`;}
+  else al.style.display='none';
+  const dr=document.getElementById('dd-repairs');
+  const rr=[...S.repairs].reverse().slice(0,4);
+  dr.innerHTML=rr.length?rr.map(r=>{const bc=r.status==='Completed'?'bg':r.status==='In Progress'?'bo':'by';return `<div class="mrow"><div class="mleft"><div class="mn">${r.customer}</div><div class="md">${r.vehicle||''}</div></div><span class="b ${bc}">${r.status}</span></div>`}).join(''):`<div class="mrow"><span style="color:var(--mut);font-size:11px">No jobs yet</span></div>`;
+  const ds=document.getElementById('dd-sales');
+  const rs=[...S.walkSales].reverse().slice(0,4);
+  ds.innerHTML=rs.length?rs.map(s=>`<div class="mrow"><div class="mleft"><div class="mn">${s.customer}</div><div class="md">${s.items.map(i=>i.name).join(', ')}</div></div><span class="price">₱${s.total.toLocaleString()}</span></div>`).join(''):`<div class="mrow"><span style="color:var(--mut);font-size:11px">No sales yet</span></div>`;
+  const dl=document.getElementById('dd-low');
+  dl.innerHTML=low.length?low.map(p=>`<div class="mrow"><div class="mleft"><div class="mn">${p.name}</div><div class="md">${p.category}</div></div><span class="b ${p.stock===0?'br':'by'}">Stock: ${p.stock}</span></div>`).join(''):`<div class="mrow"><span style="color:var(--grn);font-size:11px">✓ All stock OK</span></div>`;
+  const mx=Math.max(jobRev,walkRev,1);
+  document.getElementById('dd-rev').innerHTML=`
+    <div class="rrow"><div class="rlbl">Job Revenue</div><div class="rbbg"><div class="rb" style="width:${(jobRev/mx*100).toFixed(1)}%;background:var(--acc)"></div></div><div class="rval" style="color:var(--acc)">₱${jobRev.toLocaleString()}</div></div>
+    <div class="rrow"><div class="rlbl">Walk-in</div><div class="rbbg"><div class="rb" style="width:${(walkRev/mx*100).toFixed(1)}%;background:var(--grn)"></div></div><div class="rval" style="color:var(--grn)">₱${walkRev.toLocaleString()}</div></div>
+    <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between">
+      <span style="font-size:10px;color:var(--mut)">TOTAL</span>
+      <span style="font-family:var(--fm);font-size:13px;color:var(--acc);font-weight:700">₱${(jobRev+walkRev).toLocaleString()}</span>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+//  INVENTORY TABLE
+// ══════════════════════════════════════════
+let tblFilter='all';
+function showInvTable(){
+  tblFilter='all';
+  document.querySelectorAll('.tbl-ft').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tbl-ft').classList.add('active');
+  renderInvTable();
+  document.getElementById('modal-inv-table').classList.add('open');
+}
+function filterTbl(f,el){
+  tblFilter=f;
+  document.querySelectorAll('.tbl-ft').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderInvTable();
+}
+function renderInvTable(){
+  let parts=S.parts;
+  if(tblFilter==='ok') parts=parts.filter(p=>p.stock>p.min);
+  if(tblFilter==='low') parts=parts.filter(p=>p.stock<=p.min&&p.stock>0);
+  if(tblFilter==='out') parts=parts.filter(p=>p.stock===0);
+  const rows=parts.map(p=>{
+    const low=p.stock<=p.min,out=p.stock===0;
+    const cls=out?'out':low?'low':'ok';
+    const status=out?'Out of Stock':low?'Low Stock':'In Stock';
+    return `<tr><td>${p.name}</td><td>${p.sku||'—'}</td><td>${p.category}</td><td class="${cls}">${p.stock}</td><td>${p.min}</td><td>₱${p.cost.toLocaleString()}</td><td>₱${p.price.toLocaleString()}</td><td class="${cls}">${status}</td><td>${p.supplier||'—'}</td></tr>`;
+  }).join('');
+  const empty=parts.length===0?`<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--mut)">No items match this filter</td></tr>`:'';
+  document.getElementById('inv-table-content').innerHTML=`
+    <thead><tr><th>Part Name</th><th>SKU</th><th>Category</th><th>Stock</th><th>Min</th><th>Cost</th><th>Price</th><th>Status</th><th>Supplier</th></tr></thead>
+    <tbody>${rows||empty}</tbody>`;
+}
+
+// ══════════════════════════════════════════
+//  RECEIPTS
+// ══════════════════════════════════════════
+function receiptStyles(){
+  return `<style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:#fff;color:#111;padding:0;}
+    .wrap{max-width:360px;margin:0 auto;padding:18px 16px;}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:4px;color:#f5a623;line-height:1;}
+    .sub{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-top:1px;}
+    .jno{font-family:'JetBrains Mono',monospace;font-size:10px;color:#bbb;margin-top:6px;}
+    .dash{border:none;border-top:2px dashed #e0e0e0;margin:10px 0;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;margin:10px 0;}
+    .lbl2{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#999;}
+    .val2{font-weight:700;margin-top:1px;font-size:13px;}
+    .sec-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#f5a623;margin:10px 0 4px;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    td{padding:5px 0;border-bottom:1px solid #f5f5f5;vertical-align:top;}
+    td:last-child{text-align:right;font-weight:600;}
+    .tot-row td{font-size:16px;font-weight:800;padding-top:10px;border-top:2px solid #111;border-bottom:none;}
+    .tot-row td:last-child{color:#f5a623;}
+    .sub-row td{font-size:11px;color:#999;border:none;padding:2px 0;}
+    .change-box{background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:6px;display:flex;justify-content:space-between;align-items:center;}
+    .change-box .lbl-c{font-size:10px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:1px;}
+    .change-box .val-c{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:800;color:#15803d;}
+    .bill-row{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-top:4px;padding:0 2px;}
+    .footer{text-align:center;font-size:10px;color:#aaa;margin-top:12px;line-height:1.7;padding-top:8px;border-top:2px dashed #e0e0e0;}
+    .footer strong{color:#f5a623;}
+    @media print{body{padding:0;}}.wrap{padding:12px;}
+  </style>`;
+}
+
+function buildJobReceipt(id){
+  const r=S.repairs.find(x=>x.id===id);
+  const svT=(r.selectedSvcs||[]).reduce((a,s)=>a+s.price,0);
+  const ptT=(r.selectedParts||[]).reduce((a,p)=>a+p.qty*p.price,0);
+  const lb=r.laborFee||0;
+  const grand=r.totalCost||0;
+  const bill=r.bill||0;
+  const change=bill>0?bill-grand:null;
+  const svRows=(r.selectedSvcs||[]).map(s=>`<tr><td>${s.name}</td><td>₱${s.price.toLocaleString()}</td></tr>`).join('');
+  const ptRows=(r.selectedParts||[]).map(p=>`<tr><td>${p.name} <span style="color:#999">×${p.qty}</span></td><td>₱${(p.qty*p.price).toLocaleString()}</td></tr>`).join('');
+  const changeSection=bill>0?`
+    <div class="bill-row"><span>Bill Given</span><span>₱${bill.toLocaleString()}</span></div>
+    <div class="change-box">
+      <span class="lbl-c">${change>=0?'Change':'Short'}</span>
+      <span class="val-c">${change>=0?'₱'+change.toLocaleString():'⚠ ₱'+Math.abs(change).toLocaleString()}</span>
+    </div>`:'';
+  return receiptStyles()+`<div class="wrap">
+    <div style="text-align:center">
+      <div class="logo">EroShop</div><div class="sub">Auto Repair &amp; Parts</div>
+      <div class="jno">JOB #${r.id} · ${r.date}</div>
+    </div>
+    <hr class="dash"/>
+    <div class="grid">
+      <div><div class="lbl2">Customer</div><div class="val2">${r.customer}</div></div>
+      <div><div class="lbl2">Phone</div><div class="val2">${r.phone||'—'}</div></div>
+      <div><div class="lbl2">Vehicle</div><div class="val2">${r.vehicle||'—'}</div></div>
+      <div><div class="lbl2">Plate #</div><div class="val2">${r.plate||'—'}</div></div>
+      ${r.mechanic?`<div><div class="lbl2">Mechanic</div><div class="val2">${r.mechanic}</div></div>`:''}
+      <div><div class="lbl2">Status</div><div class="val2">${r.status}</div></div>
+    </div>
+    <hr class="dash"/>
+    ${svRows?`<div class="sec-lbl">Services</div><table>${svRows}</table>`:``}
+    ${ptRows?`<div class="sec-lbl">Parts Used</div><table>${ptRows}</table>`:``}
+    ${lb?`<div class="sec-lbl">Labor</div><table><tr><td>Labor Fee</td><td>₱${lb.toLocaleString()}</td></tr></table>`:``}
+    <hr class="dash"/>
+    <table>
+      ${svT?`<tr class="sub-row"><td>Services Subtotal</td><td>₱${svT.toLocaleString()}</td></tr>`:``}
+      ${ptT?`<tr class="sub-row"><td>Parts Subtotal</td><td>₱${ptT.toLocaleString()}</td></tr>`:``}
+      ${lb?`<tr class="sub-row"><td>Labor</td><td>₱${lb.toLocaleString()}</td></tr>`:``}
+      <tr class="tot-row"><td>TOTAL AMOUNT</td><td>₱${grand.toLocaleString()}</td></tr>
+    </table>
+    ${changeSection}
+    ${r.notes?`<hr class="dash"/><div style="font-size:10px;color:#999"><strong>Notes:</strong> ${r.notes}</div>`:``}
+    <div class="footer">Thank you for trusting <strong>EroShop</strong>!<br/>Please keep this receipt for your records.</div>
+  </div>`;
+}
+
+function buildSaleReceipt(id){
+  const s=S.walkSales.find(x=>x.id===id);
+  const rows=s.items.map(i=>`<tr><td>${i.name} <span style="color:#999">×${i.qty}</span></td><td>₱${(i.qty*i.price).toLocaleString()}</td></tr>`).join('');
+  const bill=s.bill||0;
+  const change=s.change;
+  const changeSection=(bill>0&&change!=null)?`
+    <div class="bill-row"><span>Bill Given</span><span>₱${bill.toLocaleString()}</span></div>
+    <div class="change-box">
+      <span class="lbl-c">${change>=0?'Change':'Short'}</span>
+      <span class="val-c">${change>=0?'₱'+change.toLocaleString():'⚠ ₱'+Math.abs(change).toLocaleString()}</span>
+    </div>`:'';
+  return receiptStyles()+`<div class="wrap">
+    <div style="text-align:center">
+      <div class="logo">EroShop</div><div class="sub">Auto Repair &amp; Parts</div>
+      <div class="jno">SALE #${s.id} · ${s.date}</div>
+    </div>
+    <hr class="dash"/>
+    <div class="grid">
+      <div><div class="lbl2">Customer</div><div class="val2">${s.customer}</div></div>
+      <div><div class="lbl2">Date</div><div class="val2">${s.date}</div></div>
+    </div>
+    <hr class="dash"/>
+    <div class="sec-lbl">Items Purchased</div>
+    <table>${rows}</table>
+    <hr class="dash"/>
+    <table>
+      <tr class="tot-row"><td>TOTAL AMOUNT</td><td>₱${s.total.toLocaleString()}</td></tr>
+    </table>
+    ${changeSection}
+    ${s.notes?`<hr class="dash"/><div style="font-size:10px;color:#999"><strong>Notes:</strong> ${s.notes}</div>`:``}
+    <div class="footer">Thank you for shopping at <strong>EroShop</strong>!<br/>Please keep this receipt.</div>
+  </div>`;
+}
+
+function showReceiptPreview(html){
+  let _printContent=html;
+  const iframe=document.getElementById('receipt-iframe');
+  // Write into iframe so it's fully isolated — no body bg leak
+  const doc=iframe.contentDocument||iframe.contentWindow.document;
+  doc.open();doc.write(html);doc.close();
+  document.getElementById('modal-receipt').classList.add('open');
+}
+function previewJobReceipt(id){
+  showReceiptPreview(buildJobReceipt(id));
+}
+function previewSaleReceipt(id){
+  showReceiptPreview(buildSaleReceipt(id));
+}
+function doPrint(){
+  const iframe=document.getElementById('receipt-iframe');
+  iframe.contentWindow.focus();
+  iframe.contentWindow.print();
+}
+
+// INIT runs via enterApp() after successful login
+</script>
+
+<!-- ═══════ AUTH SCREEN ═══════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">EroShop</div>
+    <div class="auth-sub">Auto Repair &amp; Parts System</div>
+
+    <!-- LOGIN VIEW -->
+    <div id="view-login">
+      <div class="auth-title">SIGN IN</div>
+      <div id="login-error" class="auth-error"></div>
+      <div id="login-info" class="auth-info"></div>
+      <div class="auth-fg"><label>Username</label><input class="auth-input" id="l-user" placeholder="Enter username" autocomplete="username"/></div>
+      <div class="auth-fg">
+        <label>Password</label>
+        <div style="position:relative">
+          <input class="auth-input" id="l-pass" type="password" placeholder="Enter password" autocomplete="current-password" style="padding-right:44px"/>
+          <button onclick="togglePw('l-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mut);cursor:pointer;font-size:14px;padding:4px;">👁</button>
+        </div>
+      </div>
+      <button class="auth-btn primary" onclick="doLogin()">Sign In →</button>
+      <div class="auth-divider"><span></span><p>or</p><span></span></div>
+      <div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:10px 12px;margin-bottom:10px">
+        <div style="font-size:10px;color:var(--acc);font-weight:700;margin-bottom:6px">📋 HAVE A SYNC CODE?</div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:7px">Admin sent you a sync code? Paste it here first, then sign in.</div>
+        <textarea class="auth-input" id="login-sync-code" placeholder="Paste sync code here…" style="min-height:55px;font-size:11px;font-family:var(--fm);margin-bottom:6px"></textarea>
+        <button class="auth-btn primary" style="padding:8px;font-size:12px" onclick="importSyncCodeFromLogin()">Import Sync Code</button>
+      </div>
+      <div class="auth-footer">No account? <span class="auth-link" onclick="switchView('register')">Request Access</span></div>
+    </div>
+
+    <!-- REGISTER VIEW -->
+    <div id="view-register" style="display:none">
+      <div class="auth-title">REQUEST ACCESS</div>
+      <div id="reg-error" class="auth-error"></div>
+      <div id="reg-info" class="auth-info" style="display:block">
+        ℹ️ If no admin exists yet, your account will be created as <strong>Admin</strong> automatically. Otherwise, your request will be sent to the admin for approval.
+      </div>
+      <div class="auth-fg"><label>Full Name</label><input class="auth-input" id="r-fullname" placeholder="Your full name"/></div>
+      <div class="auth-fg"><label>Username</label><input class="auth-input" id="r-uname" placeholder="Choose a username"/></div>
+      <div class="auth-fg"><label>Role</label>
+        <select class="auth-input" id="r-role" style="background:var(--sur2)">
+          <option value="staff">Staff</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="auth-fg">
+        <label>Password</label>
+        <div style="position:relative">
+          <input class="auth-input" id="r-pass" type="password" placeholder="Create password (min 6 chars)" style="padding-right:44px" oninput="checkPwStrength(this)"/>
+          <button onclick="togglePw('r-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mut);cursor:pointer;font-size:14px;padding:4px;">👁</button>
+        </div>
+        <div class="pw-strength" id="pw-bar"></div>
+        <span id="pw-label" style="font-size:9px;color:var(--mut);margin-top:2px"></span>
+      </div>
+      <div class="auth-fg">
+        <label>Confirm Password</label>
+        <input class="auth-input" id="r-pass2" type="password" placeholder="Repeat password"/>
+      </div>
+      <button class="auth-btn primary" onclick="doRegister()">Submit Request →</button>
+      <button class="auth-btn ghost" onclick="switchView('login')">← Back to Sign In</button>
+    </div>
+
+    <!-- PENDING VIEW -->
+    <div id="view-pending" style="display:none">
+      <div class="auth-title">REQUEST SENT</div>
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:48px;margin-bottom:12px">⏳</div>
+        <div style="font-size:14px;color:var(--txt);font-weight:600;margin-bottom:8px">Your request is pending approval</div>
+        <div style="font-size:12px;color:var(--mut);line-height:1.6">The admin must approve your account. Once approved, they'll send you an updated <strong style="color:var(--acc)">Sync Code</strong>. Paste it below then sign in.</div>
+      </div>
+      <div class="auth-fg" style="margin-top:8px">
+        <label>Paste Sync Code from Admin</label>
+        <textarea class="auth-input" id="pending-sync-code" placeholder="Paste sync code here…" style="min-height:70px;font-size:11px;font-family:var(--fm)"></textarea>
+      </div>
+      <button class="auth-btn primary" onclick="importAndLogin()">Import & Continue →</button>
+      <button class="auth-btn ghost" onclick="switchView('login')">← Back to Sign In</button>
+    </div>
+
+  </div>
+  <div style="text-align:center;margin-top:14px;font-size:10px;color:var(--mut)">EroShop System v2.0 · Secure Local Auth</div>
+</div>
+
+<!-- ═══════ SYNC CODE MODAL ═══════ -->
+<div class="admin-panel" id="sync-modal" style="z-index:9500">
+  <div class="admin-modal" style="max-height:80vh">
+    <div style="width:30px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 14px;"></div>
+    <div style="font-family:var(--fd);font-size:19px;letter-spacing:1.5px;color:var(--acc);margin-bottom:4px">🔗 SYNC CODE</div>
+    <div style="font-size:11px;color:var(--mut);margin-bottom:14px;line-height:1.6" id="sync-modal-desc"></div>
+    <div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:11px;margin-bottom:12px">
+      <div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">YOUR SYNC CODE</div>
+      <div id="sync-code-text" style="font-family:var(--fm);font-size:10px;word-break:break-all;color:var(--acc);line-height:1.6;max-height:120px;overflow-y:auto"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="btic" style="flex:2;padding:10px;font-size:12px" onclick="copySyncCode()">📋 Copy Code</button>
+      <button class="btic" style="flex:1;padding:10px;font-size:12px" onclick="shareSyncCode()">↗ Share</button>
+    </div>
+    <div style="font-size:11px;color:var(--mut);background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:9px;line-height:1.6;margin-bottom:12px">
+      💡 Send this code to your staff via <strong style="color:var(--acc)">Facebook Messenger</strong>. They paste it on their device before signing in. <strong style="color:var(--acc)">Share a new code every time you approve someone.</strong>
+    </div>
+    <button class="btic" style="width:100%;padding:10px;font-size:12px" onclick="closeSyncModal()">Done ✓</button>
+  </div>
+</div>
+
+<!-- ═══════ ADMIN PANEL ═══════ -->
+<div class="admin-panel" id="admin-panel">
+  <div class="admin-modal">
+    <div style="width:30px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 14px;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-family:var(--fd);font-size:19px;letter-spacing:1.5px;color:var(--acc)">ADMIN PANEL</div>
+      <button class="btic" style="flex:none;padding:5px 10px" onclick="closeAdminPanel()">✕</button>
+    </div>
+    <!-- current user info -->
+    <div id="ap-userinfo" style="background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:12px;margin-bottom:14px"></div>
+    <!-- tabs -->
+    <div class="tabs" style="margin-bottom:12px">
+      <div class="tab active" onclick="apTab('requests',this)">Requests</div>
+      <div class="tab" onclick="apTab('users',this)">Users</div>
+      <div class="tab" onclick="apTab('sync',this)">🔗 Sync</div>
+      <div class="tab" onclick="apTab('security',this)">Security</div>
+    </div>
+    <div id="ap-content"></div>
+    <button class="auth-btn ghost" style="margin-top:12px;width:100%;padding:10px;border-radius:9px;font-family:var(--fb);font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--red);border:1px solid rgba(239,68,68,.3)" onclick="doLogout()">🚪 Sign Out</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  AUTH SYSTEM
+//  Auth data is SHARED via Sync Code.
+//  Shop data is LOCAL (offline-capable).
+//
+//  HOW IT WORKS:
+//  - Admin creates account → stored locally + generates a SYNC CODE
+//  - Admin copies/sends that Sync Code to each staff member
+//  - Staff paste the code on their device → imports all users
+//  - When admin approves a staff request, they share the updated Sync Code
+//  - Shop inventory/jobs/sales stay 100% local → works offline always
+// ══════════════════════════════════════════
+
+async function hashPw(pw){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function getAuth(){return JSON.parse(localStorage.getItem('eroshop_auth')||'{"users":[],"requests":[],"session":null}');}
+function setAuth(a){localStorage.setItem('eroshop_auth',JSON.stringify(a));}
+
+// Encode auth (without sessions) into a compact share code
+function exportAuthCode(){
+  const a=getAuth();
+  const exportable={users:a.users,requests:a.requests};
+  return btoa(unescape(encodeURIComponent(JSON.stringify(exportable))));
+}
+
+// Import a sync code — merges users, doesn't overwrite session
+function importAuthCode(code){
+  try{
+    const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
+    if(!data.users)return false;
+    const a=getAuth();
+    a.users=data.users;
+    a.requests=data.requests||[];
+    setAuth(a);
+    return true;
+  }catch(e){return false;}
+}
+
+let currentUser=null;
+
+let currentUser=null;
+
+function togglePw(id,btn){
+  const el=document.getElementById(id);
+  if(el.type==='password'){el.type='text';btn.textContent='🙈';}
+  else{el.type='password';btn.textContent='👁';}
+}
+
+function checkPwStrength(input){
+  const v=input.value;
+  const bar=document.getElementById('pw-bar');
+  const lbl=document.getElementById('pw-label');
+  if(!v){bar.style.background='var(--bdr)';bar.style.width='0%';lbl.textContent='';return;}
+  let score=0;
+  if(v.length>=6)score++;
+  if(v.length>=10)score++;
+  if(/[A-Z]/.test(v))score++;
+  if(/[0-9]/.test(v))score++;
+  if(/[^A-Za-z0-9]/.test(v))score++;
+  const colors=['var(--red)','var(--red)','var(--yel)','var(--acc)','var(--grn)'];
+  const labels=['Too Short','Weak','Fair','Strong','Very Strong'];
+  bar.style.background=colors[score-1]||'var(--bdr)';
+  bar.style.width=(score*20)+'%';
+  lbl.textContent=labels[score-1]||'';
+  lbl.style.color=colors[score-1]||'var(--mut)';
+}
+
+function switchView(v){
+  ['login','register','pending'].forEach(x=>document.getElementById('view-'+x).style.display='none');
+  document.getElementById('view-'+v).style.display='block';
+  // Reset error styles
+  const errEl=document.getElementById('login-error');
+  if(errEl){errEl.style.display='none';errEl.style.background='';errEl.style.borderColor='';errEl.style.color='';}
+  const infoEl=document.getElementById('login-info');
+  if(infoEl)infoEl.style.display='none';
+  if(v==='login'){
+    const a=getAuth();
+    if(!a.users.length&&infoEl){
+      infoEl.style.display='block';
+      infoEl.textContent='👋 No admin yet — click "Request Access" to set up your admin account.';
+    }
+  }
+  if(v==='register'){
+    const a=getAuth();
+    const adminExists=a.users.some(u=>u.role==='admin');
+    const roleSelect=document.getElementById('r-role');
+    const regInfo=document.getElementById('reg-info');
+    if(adminExists){
+      roleSelect.innerHTML='<option value="staff">Staff</option>';
+      if(regInfo){regInfo.style.display='block';regInfo.innerHTML='ℹ️ An admin already exists. Your request will be sent for admin approval. Once approved, the admin will send you a <strong style="color:var(--acc)">Sync Code</strong> to paste here.';}
+    } else {
+      roleSelect.innerHTML='<option value="admin">Admin (First Setup)</option>';
+      if(regInfo){regInfo.style.display='block';regInfo.innerHTML='🔑 No admin exists yet. You will be set as <strong>Admin</strong> automatically. A Sync Code will be generated — share it with your staff.';}
+    }
+  }
+}
+
+async function doLogin(){
+  const uname=document.getElementById('l-user').value.trim();
+  const pw=document.getElementById('l-pass').value;
+  const errEl=document.getElementById('login-error');
+  errEl.style.display='none';
+  if(!uname||!pw){errEl.textContent='Please fill in all fields.';errEl.style.display='block';return;}
+  const a=getAuth();
+  const hash=await hashPw(pw);
+  const user=a.users.find(u=>u.username.toLowerCase()===uname.toLowerCase()&&u.hash===hash);
+  if(!user){errEl.textContent='Incorrect username or password.';errEl.style.display='block';return;}
+  if(user.status==='pending'){errEl.textContent='Your account is still pending admin approval.';errEl.style.display='block';return;}
+  if(user.status==='rejected'){errEl.textContent='Your access request was rejected. Contact the admin.';errEl.style.display='block';return;}
+  // Login success
+  a.session={uid:user.id,username:user.username,role:user.role,name:user.name,loginAt:Date.now()};
+  setAuth(a);
+  currentUser=user;
+  enterApp();
+}
+
+async function doRegister(){
+  const name=document.getElementById('r-fullname').value.trim();
+  const uname=document.getElementById('r-uname').value.trim();
+  const role=document.getElementById('r-role').value;
+  const pw=document.getElementById('r-pass').value;
+  const pw2=document.getElementById('r-pass2').value;
+  const errEl=document.getElementById('reg-error');
+  errEl.style.display='none';
+  if(!name||!uname||!pw||!pw2){errEl.textContent='Please fill in all fields.';errEl.style.display='block';return;}
+  if(pw.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='block';return;}
+  if(pw!==pw2){errEl.textContent='Passwords do not match.';errEl.style.display='block';return;}
+  const a=getAuth();
+  if(a.users.find(u=>u.username.toLowerCase()===uname.toLowerCase())){errEl.textContent='Username already taken.';errEl.style.display='block';return;}
+  if(a.requests.find(r=>r.username.toLowerCase()===uname.toLowerCase()&&r.status==='pending')){errEl.textContent='A request with this username already exists.';errEl.style.display='block';return;}
+  const hash=await hashPw(pw);
+  const isFirst=a.users.length===0;
+  const newUser={
+    id:'u'+Date.now(),name,username:uname,hash,role:isFirst?'admin':role,
+    status:isFirst?'active':'pending',
+    createdAt:Date.now()
+  };
+  if(isFirst){
+    a.users.push(newUser);
+    a.session={uid:newUser.id,username:newUser.username,role:'admin',name:newUser.name,loginAt:Date.now()};
+    setAuth(a);
+    currentUser=newUser;
+    // Show sync code immediately so admin can share it
+    showSyncCodeModal(true);
+    enterApp();
+  } else {
+    a.requests.push({...newUser,status:'pending',requestedAt:Date.now()});
+    setAuth(a);
+    switchView('pending');
+  }
+}
+
+function enterApp(){
+  document.getElementById('auth-screen').classList.add('hidden');
+  renderUserBadge();
+  // Init the main app
+  document.getElementById('todayDate').textContent=new Date().toLocaleDateString('en-PH',{weekday:'short',month:'short',day:'numeric'});
+  rDash();
+}
+
+function renderUserBadge(){
+  const badge=document.getElementById('user-badge-slot');
+  if(!badge||!currentUser)return;
+  const initials=currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  badge.innerHTML=`<div class="user-badge" onclick="openAdminPanel()">
+    <div class="user-avatar">${initials}</div>
+    <div class="user-name">${currentUser.name.split(' ')[0]}</div>
+    ${currentUser.role==='admin'?'<span style="font-size:8px;color:var(--acc)">★</span>':''}
+  </div>`;
+}
+
+function doLogout(){
+  const a=getAuth();a.session=null;setAuth(a);
+  currentUser=null;
+  closeAdminPanel();
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('user-badge-slot').innerHTML='';
+  switchView('login');
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+}
+
+// ── ADMIN PANEL ──
+let apCurrentTab='requests';
+function openAdminPanel(){document.getElementById('admin-panel').classList.add('open');apRender();}
+function closeAdminPanel(){document.getElementById('admin-panel').classList.remove('open');}
+function apTab(t,el){apCurrentTab=t;document.querySelectorAll('.admin-panel .tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');apRender();}
+
+function apRender(){
+  if(!currentUser)return;
+  const a=getAuth();
+  // User info
+  document.getElementById('ap-userinfo').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#000;flex-shrink:0">${currentUser.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div>
+        <div style="font-size:14px;font-weight:700">${currentUser.name}</div>
+        <div style="font-size:10px;color:var(--mut)">@${currentUser.username} · <span style="color:${currentUser.role==='admin'?'var(--acc)':'var(--blu)'}">${currentUser.role.toUpperCase()}</span></div>
+      </div>
+    </div>`;
+  const el=document.getElementById('ap-content');
+  if(apCurrentTab==='requests'){
+    const pending=a.requests.filter(r=>r.status==='pending');
+    if(!pending.length){el.innerHTML=`<div class="empty" style="padding:20px">No pending requests ✓</div>`;return;}
+    el.innerHTML=pending.map(r=>`
+      <div class="req-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="req-name">${r.name}</div>
+            <div class="req-role">@${r.username} · Requested: ${r.role.toUpperCase()}</div>
+            <div style="font-size:9px;color:var(--mut);margin-top:2px">${new Date(r.requestedAt).toLocaleString()}</div>
+          </div>
+          <span class="b by">Pending</span>
+        </div>
+        <div class="req-actions">
+          <button class="btic grn" onclick="approveRequest('${r.id}')">✓ Approve</button>
+          <button class="btic dl" onclick="rejectRequest('${r.id}')">✕ Reject</button>
+        </div>
+      </div>`).join('');
+  }
+  else if(apCurrentTab==='users'){
+    if(!a.users.length){el.innerHTML=`<div class="empty">No users yet</div>`;return;}
+    el.innerHTML=a.users.map(u=>`
+      <div class="req-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="req-name">${u.name}</div>
+            <div class="req-role">@${u.username} · ${u.role.toUpperCase()}</div>
+          </div>
+          <span class="b ${u.status==='active'?'bg':u.status==='pending'?'by':'br'}">${u.status}</span>
+        </div>
+        ${u.id!==currentUser.id&&currentUser.role==='admin'?`
+        <div class="req-actions">
+          <button class="btic" onclick="toggleRole('${u.id}')">${u.role==='admin'?'↓ Make Staff':'↑ Make Admin'}</button>
+          <button class="btic dl" onclick="removeUser('${u.id}')">🗑 Remove</button>
+        </div>`:''}
+      </div>`).join('');
+  }
+  else if(apCurrentTab==='sync'){
+    const code=exportAuthCode();
+    el.innerHTML=`
+      <div style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">
+        Share this code with your staff after approving their request. They paste it on their device to get access.
+      </div>
+      <div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:11px;margin-bottom:10px">
+        <div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">CURRENT SYNC CODE</div>
+        <div style="font-family:var(--fm);font-size:10px;word-break:break-all;color:var(--acc);line-height:1.6;max-height:100px;overflow-y:auto" id="ap-sync-code">${code}</div>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:10px">
+        <button class="btic" style="flex:2;padding:9px;font-size:11px" onclick="copyApSyncCode()">📋 Copy Code</button>
+        <button class="btic" style="flex:1;padding:9px;font-size:11px" onclick="shareApSyncCode()">↗ Share</button>
+      </div>
+      <div style="font-size:10px;color:var(--mut);background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:9px;line-height:1.6">
+        💡 <strong style="color:var(--acc)">When to share:</strong> After you approve a new staff request, go here and share the updated code. Staff paste it on their device then sign in with their username and password.
+      </div>`;
+  }
+    el.innerHTML=`
+      <div style="font-size:11px;color:var(--mut);margin-bottom:12px">Change your password</div>
+      <div class="auth-fg" style="margin-bottom:9px"><label>Current Password</label><input class="auth-input" id="sec-old" type="password" placeholder="Current password"/></div>
+      <div class="auth-fg" style="margin-bottom:9px"><label>New Password</label><input class="auth-input" id="sec-new" type="password" placeholder="New password (min 6)" oninput="checkPwStrength(this)"/>
+        <div class="pw-strength" id="pw-bar"></div>
+      </div>
+      <div class="auth-fg" style="margin-bottom:12px"><label>Confirm New</label><input class="auth-input" id="sec-new2" type="password" placeholder="Repeat new password"/></div>
+      <div id="sec-msg" style="font-size:12px;margin-bottom:8px;display:none"></div>
+      <button class="btic" style="width:100%;padding:10px;font-size:12px" onclick="changePassword()">🔒 Update Password</button>`;
+  }
+}
+
+function approveRequest(rid){
+  const a=getAuth();
+  const req=a.requests.find(r=>r.id===rid);
+  if(!req)return;
+  req.status='approved';
+  a.users.push({id:req.id,name:req.name,username:req.username,hash:req.hash,role:req.role,status:'active',createdAt:req.requestedAt});
+  setAuth(a);apRender();
+  // Immediately show updated sync code to share
+  setTimeout(()=>showSyncCodeModal(false, req.name),300);
+}
+function rejectRequest(rid){
+  if(!confirm('Reject this request?'))return;
+  const a=getAuth();
+  const req=a.requests.find(r=>r.id===rid);
+  if(req)req.status='rejected';
+  setAuth(a);apRender();
+}
+function toggleRole(uid){
+  const a=getAuth();
+  const u=a.users.find(x=>x.id===uid);
+  if(!u)return;
+  u.role=u.role==='admin'?'staff':'admin';
+  setAuth(a);apRender();
+}
+function removeUser(uid){
+  if(!confirm('Remove this user? They will no longer be able to log in.'))return;
+  const a=getAuth();
+  a.users=a.users.filter(u=>u.id!==uid);
+  setAuth(a);apRender();
+}
+async function changePassword(){
+  const oldPw=document.getElementById('sec-old').value;
+  const newPw=document.getElementById('sec-new').value;
+  const newPw2=document.getElementById('sec-new2').value;
+  const msg=document.getElementById('sec-msg');
+  msg.style.display='none';
+  if(!oldPw||!newPw||!newPw2){msg.textContent='Fill in all fields.';msg.style.color='var(--red)';msg.style.display='block';return;}
+  if(newPw.length<6){msg.textContent='New password must be at least 6 characters.';msg.style.color='var(--red)';msg.style.display='block';return;}
+  if(newPw!==newPw2){msg.textContent='New passwords do not match.';msg.style.color='var(--red)';msg.style.display='block';return;}
+  const oldHash=await hashPw(oldPw);
+  const a=getAuth();
+  const u=a.users.find(x=>x.id===currentUser.id);
+  if(!u||u.hash!==oldHash){msg.textContent='Current password is incorrect.';msg.style.color='var(--red)';msg.style.display='block';return;}
+  u.hash=await hashPw(newPw);
+  setAuth(a);
+  msg.textContent='✓ Password updated successfully!';msg.style.color='var(--grn)';msg.style.display='block';
+  document.getElementById('sec-old').value='';document.getElementById('sec-new').value='';document.getElementById('sec-new2').value='';
+}
+
+// ── SYNC CODE FUNCTIONS ──
+let _syncCode='';
+
+function showSyncCodeModal(isFirstSetup=false, approvedName=''){
+  _syncCode=exportAuthCode();
+  document.getElementById('sync-code-text').textContent=_syncCode;
+  const desc=document.getElementById('sync-modal-desc');
+  if(isFirstSetup){
+    desc.innerHTML=`🎉 <strong style="color:var(--acc)">You are now the Admin!</strong><br><br>Share this Sync Code with staff members so they can access the system on their device. Send it via <strong>Facebook Messenger</strong>. Generate a new one each time you approve someone.`;
+  } else if(approvedName){
+    desc.innerHTML=`✅ <strong style="color:var(--acc)">${approvedName}</strong> has been approved!<br><br>Share this updated Sync Code with them via Messenger. They paste it on their device, then sign in with their username and password.`;
+  } else {
+    desc.innerHTML=`Share this Sync Code with staff so they can access the system. It includes all approved users.`;
+  }
+  document.getElementById('sync-modal').classList.add('open');
+}
+
+function closeSyncModal(){
+  document.getElementById('sync-modal').classList.remove('open');
+}
+
+function copySyncCode(){
+  navigator.clipboard.writeText(_syncCode||exportAuthCode()).then(()=>{
+    const btn=event.target;btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy Code',2000);
+  }).catch(()=>{
+    // Fallback: select the text
+    const el=document.getElementById('sync-code-text');
+    const range=document.createRange();range.selectNode(el);
+    window.getSelection().removeAllRanges();window.getSelection().addRange(range);
+    alert('Code selected! Long-press and copy.');
+  });
+}
+
+function shareSyncCode(){
+  const code=_syncCode||exportAuthCode();
+  if(navigator.share){
+    navigator.share({
+      title:'EroShop Access Code',
+      text:'Paste this Sync Code in EroShop to get access:\n\n'+code
+    }).catch(()=>{});
+  } else {
+    copyApSyncCode();
+  }
+}
+
+function copyApSyncCode(){
+  const code=document.getElementById('ap-sync-code')?.textContent||exportAuthCode();
+  navigator.clipboard.writeText(code).then(()=>{
+    const btn=event.target;btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy Code',2000);
+  }).catch(()=>{
+    alert('Please long-press the code text and copy it manually.');
+  });
+}
+
+function shareApSyncCode(){
+  const code=document.getElementById('ap-sync-code')?.textContent||exportAuthCode();
+  if(navigator.share){
+    navigator.share({title:'EroShop Sync Code',text:'EroShop Access Sync Code:\n\n'+code}).catch(()=>{});
+  } else {
+    copyApSyncCode();
+  }
+}
+
+function importSyncCodeFromLogin(){
+  const code=document.getElementById('login-sync-code').value.trim();
+  if(!code){alert('Please paste the sync code first.');return;}
+  const ok=importAuthCode(code);
+  if(ok){
+    document.getElementById('login-sync-code').value='';
+    const errEl=document.getElementById('login-error');
+    errEl.style.display='block';
+    errEl.style.background='rgba(34,197,94,.1)';
+    errEl.style.borderColor='rgba(34,197,94,.3)';
+    errEl.style.color='var(--grn)';
+    errEl.textContent='✓ Sync code imported! Now sign in with your username and password.';
+  } else {
+    alert('Invalid sync code. Please ask the admin to send it again.');
+  }
+}
+
+function importAndLogin(){
+  const code=document.getElementById('pending-sync-code').value.trim();
+  if(!code){alert('Please paste the sync code from the admin.');return;}
+  const ok=importAuthCode(code);
+  if(ok){switchView('login');}
+  else{alert('Invalid sync code. Ask the admin to resend it.');}
+}
+
+// ── AUTO LOGIN if session exists ──
+(function initAuth(){
+  const a=getAuth();
+  if(a.session){
+    const u=a.users.find(x=>x.id===a.session.uid&&x.status==='active');
+    if(u){currentUser=u;enterApp();return;}
+    else{a.session=null;setAuth(a);}
+  }
+  // Show login screen
+  switchView('login');
+})();
+</script>
